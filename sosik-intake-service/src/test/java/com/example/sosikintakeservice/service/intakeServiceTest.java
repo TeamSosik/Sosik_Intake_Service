@@ -65,6 +65,14 @@ public class intakeServiceTest {
         assertThat(intakeService.createIntake(testIntakeDTO1)).isEqualTo("ok");
     }
 
+    @DisplayName("섭취 음식 조회시 정상적으로 작동된다.")
+    @Test
+    void givenTestIntakeWhenGetIntakeThenSuccess() {
+        ResponseGetIntake actualResponse = testgetIntakeDTO();
+        assertThat(actualResponse).isEqualTo(expectedResponse);
+    }
+
+
 
     private static RequestIntake testIntakeDTO() {
         return RequestIntake.builder()
