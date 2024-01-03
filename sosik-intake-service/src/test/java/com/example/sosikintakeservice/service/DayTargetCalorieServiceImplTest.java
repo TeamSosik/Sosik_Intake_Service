@@ -1,0 +1,86 @@
+package com.example.sosikintakeservice.service;
+
+import com.example.sosikintakeservice.dto.request.RequestTargetCalorie;
+import com.example.sosikintakeservice.exception.ApplicationException;
+import com.example.sosikintakeservice.model.entity.DayTargetCalorieEntity;
+import com.example.sosikintakeservice.repository.TargetCalorieRepository;
+import net.bytebuddy.asm.Advice;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.time.LocalDateTime;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.when;
+
+@DisplayName("비즈니스 로직 - 게시글")
+@ExtendWith(MockitoExtension.class)
+class DayTargetCalorieServiceImplTest {
+    private final DayTargetCalorieEntity dayTargetCalorieEntity = testTargetCalorie();
+    @InjectMocks
+    private DayTargetCalorieServiceImpl dayTargetCalorieService;
+    @Mock
+    private TargetCalorieRepository targetCalorieRepository;
+    @Mock
+    private Optional<DayTargetCalorieEntity> targetCalorieEntity = Optional.of(testTargetCalorie());
+    @Mock
+    private LocalDateTime currentTime = LocalDateTime.now();
+    @Mock
+    private LocalDateTime lastCreatedDate;
+
+
+
+
+    @DisplayName("일일목표칼로리 기입에 성공한다.")
+    @Test
+    void givenTestTargetCalorieWhenCreateTargetCalorieThenSuccess(){
+
+        RequestTargetCalorie testTargetCalorieDto = testTargetCalorieDto();
+
+        given(targetCalorieRepository.save(any())).willReturn(any());
+
+        assertThat(dayTargetCalorieService.createTargetCalorie(testTargetCalorieDto)).isEqualTo(testTargetCalorieDto);
+
+    }
+    @DisplayName("일일목표칼로리 기입에 실패한다. - 오늘 등록했음")
+    @Test
+    void givenTestTargetCalorieWhenCreateTargetCalorieThrowEXISTENCE_TARGETCALORIE_ERROR(){
+
+        RequestTargetCalorie testTargetCalorieDto = testTargetCalorieErrorDto();
+        given(targetCalorieRepository.findTopByOrderByLastCreatedDateDesc()).willReturn(targetCalorieEntity);
+        when(targetCalorieEntity.get().getCreatedAt()).thenReturn(currentTime);
+        given(lastCreatedDate).willReturn(LocalDateTime.now());
+        assertThatThrownBy(()-> dayTargetCalorieService.createTargetCalorie(testTargetCalorieDto))
+                .isInstanceOf(ApplicationException.class);
+    }
+
+    private static RequestTargetCalorie testTargetCalorieDto(){
+        return RequestTargetCalorie.builder()
+                .memberId(1L)
+                .dayTargetKcal(2000)
+                .dailyIntakePurpose(1)
+                .build();
+    }
+    private static RequestTargetCalorie testTargetCalorieErrorDto(){
+        return RequestTargetCalorie.builder()
+                .memberId(1L)
+                .dailyIntakePurpose(1)
+                .build();
+    }
+
+    private static DayTargetCalorieEntity testTargetCalorie(){
+        return DayTargetCalorieEntity.builder()
+                .memberId(1L)
+                .dayTargetKcal(2000)
+                .dailyIntakePurpose(1)
+                .build();
+    }
+}
