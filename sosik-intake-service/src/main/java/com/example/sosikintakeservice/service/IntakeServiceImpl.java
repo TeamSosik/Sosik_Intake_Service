@@ -38,5 +38,26 @@ public class IntakeServiceImpl implements IntakeService{
         return "ok";
     }
 
+    public List<ResponseGetIntake> getIntakes(RequestGetIntake requestgetIntake) {
+        List<IntakeEntity> intakeEntities = intakeRepository.findByMemberIdAndCreatedAt(requestgetIntake.memberId(),
+                requestgetIntake.createdAt());
+
+        return intakeEntities.stream()
+                .map(intakeEntity -> {
+                    return ResponseGetIntake.builder()
+                            .memberId(intakeEntity.getMemberId())
+                            .foodId(intakeEntity.getFoodId())
+                            .dayTargetCalorieId(intakeEntity.getDayTargetCalorieId())
+                            .calculationCarbo(intakeEntity.getCalculationCarbo())
+                            .calculationProtein(intakeEntity.getCalculationProtein())
+                            .calculationFat(intakeEntity.getCalculationFat())
+                            .calculationKcal(intakeEntity.getCalculationKcal())
+                            .foodAmount(intakeEntity.getFoodAmount())
+                            .category(intakeEntity.getCategory())
+                            .build();
+                }).collect(Collectors.toList());
+    }
+
+
 
 }
