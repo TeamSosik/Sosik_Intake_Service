@@ -3,6 +3,7 @@ package com.example.sosikintakeservice.service;
 import com.example.sosikintakeservice.dto.request.RequestGetFoodInfo;
 import com.example.sosikintakeservice.dto.request.RequestIntake;
 import com.example.sosikintakeservice.dto.response.ResponseGetIntake;
+import com.example.sosikintakeservice.dto.response.Result;
 import com.example.sosikintakeservice.exception.ApplicationException;
 import com.example.sosikintakeservice.model.entity.Category;
 import com.example.sosikintakeservice.repository.IntakeRepository;
@@ -12,6 +13,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.web.bind.annotation.DeleteMapping;
+
 import java.math.BigDecimal;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -72,6 +75,19 @@ public class intakeServiceTest {
         assertThat(actualResponse).isEqualTo(expectedResponse);
     }
 
+    @DisplayName("섭취 음식 삭제시 정상적으로 작동된다.")
+    @Test
+    void givenTestMemberWhenDeleteMemberThenSuccess(){
+        String ok = intakeService.deleteIntake(1L);
+        assertThat(ok).isEqualTo("ok");
+    }
+
+    @DisplayName("섭취 음식 삭제시 존재하지 않는다.")
+    @Test
+    void givenTestMemberWhenDeleteMemberThrowINTAKE_NOT_FOUND(){
+        given(intakeRepository.findById(any())).willReturn(null);
+        assertThatThrownBy(()-> intakeService.deleteIntake(1L)).isInstanceOf(ApplicationException.class);
+    }
 
 
     private static RequestIntake testIntakeDTO() {

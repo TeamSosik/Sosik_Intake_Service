@@ -30,4 +30,10 @@ public class IntakeController {
         return Result.success(responseGetIntakes);
     }
 
+    @DeleteMapping("/{intakeId}")
+    public Result<Void> deleteIntake(@PathVariable final Long intakeId) {
+        intakeService.deleteIntake(intakeId);
+        return Result.success();
+    }
+
 }
