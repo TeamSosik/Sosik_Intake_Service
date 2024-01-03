@@ -8,6 +8,7 @@ import java.util.List;
 
 public interface IntakeService {
     String createIntake(RequestIntake intakeDTO);
+    ResponseGetIntake getIntake(Long intakeId);
     List<ResponseGetIntake> getIntakes(RequestGetIntake requestgetIntake);
     String deleteIntake(Long intakeId);
 

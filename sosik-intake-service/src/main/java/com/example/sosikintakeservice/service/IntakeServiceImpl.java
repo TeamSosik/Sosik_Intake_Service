@@ -38,6 +38,23 @@ public class IntakeServiceImpl implements IntakeService{
         return "ok";
     }
 
+    public ResponseGetIntake getIntake(Long intakeId) {
+        IntakeEntity intakeEntity = intakeRepository.findById(intakeId)
+                .orElseThrow(IllegalArgumentException::new);
+
+        return new ResponseGetIntake(
+                intakeEntity.getMemberId(),
+                intakeEntity.getFoodId(),
+                intakeEntity.getDayTargetCalorieId(),
+                intakeEntity.getCalculationCarbo(),
+                intakeEntity.getCalculationProtein(),
+                intakeEntity.getCalculationFat(),
+                intakeEntity.getCalculationKcal(),
+                intakeEntity.getFoodAmount(),
+                intakeEntity.getCategory()
+        );
+    }
+
     public List<ResponseGetIntake> getIntakes(RequestGetIntake requestgetIntake) {
         List<IntakeEntity> intakeEntities = intakeRepository.findByMemberIdAndCreatedAt(requestgetIntake.memberId(),
                 requestgetIntake.createdAt());

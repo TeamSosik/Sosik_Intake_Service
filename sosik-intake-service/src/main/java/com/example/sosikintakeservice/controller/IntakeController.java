@@ -24,6 +24,12 @@ public class IntakeController {
         intakeService.createIntake(intake);
         return Result.success();
     }
+
+    @GetMapping("/{intakeId}")
+    public Result<ResponseGetIntake> getIntake(@PathVariable final Long intakeId) {
+        ResponseGetIntake responseGetIntake = intakeService.getIntake(intakeId);
+        return Result.success(responseGetIntake);
+    }
     @GetMapping("/")
     public Result<List<ResponseGetIntake>> getIntakes(@RequestBody final RequestGetIntake requestgetIntake) {
         List<ResponseGetIntake> responseGetIntakes = intakeService.getIntakes(requestgetIntake);
