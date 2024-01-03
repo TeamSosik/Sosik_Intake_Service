@@ -1,6 +1,7 @@
 package com.example.sosikintakeservice.service;
 
 import com.example.sosikintakeservice.dto.request.RequestTargetCalorie;
+import com.example.sosikintakeservice.dto.request.UpdateTargetCalorie;
 import com.example.sosikintakeservice.exception.ApplicationException;
 import com.example.sosikintakeservice.model.entity.DayTargetCalorieEntity;
 import com.example.sosikintakeservice.repository.TargetCalorieRepository;
@@ -62,6 +63,25 @@ class DayTargetCalorieServiceImplTest {
                 .isInstanceOf(ApplicationException.class);
     }
 
+    @DisplayName("일일목표칼로리 수정에 성공한다.")
+    @Test
+    void givenTestTargetCalorieWhenUpdateTargetCalorieThenSuccess(){
+        UpdateTargetCalorie updateTargetCalorie = testUpdateTargetCalorieDto();
+        given(targetCalorieRepository.findById(updateTargetCalorie.Id())).willReturn(Optional.ofNullable(dayTargetCalorieEntity));
+        dayTargetCalorieEntity.updateTargetCalorie(updateTargetCalorie);
+        assertThat(dayTargetCalorieService.updateDayTargetCalorie(updateTargetCalorie)).isEqualTo("ok");
+
+    }
+    @DisplayName("일일목표칼로리 수정에 실패한다. - updateDTO id로 찾는 entity가 없을 때")
+    @Test
+    void givenTestTargetCalorieWhenUpdateTargetCalorieThrowTARGETCALORIE_NOT_FOUND(){
+        UpdateTargetCalorie updateTargetCalorie = testUpdateTargetCalorieErrorDto();
+        given(targetCalorieRepository.findById(updateTargetCalorie.Id())).willReturn(Optional.empty());
+        assertThatThrownBy(()-> dayTargetCalorieService.updateDayTargetCalorie(updateTargetCalorie))
+                .isInstanceOf(ApplicationException.class);
+
+    }
+
     private static RequestTargetCalorie testTargetCalorieDto(){
         return RequestTargetCalorie.builder()
                 .memberId(1L)
@@ -72,6 +92,20 @@ class DayTargetCalorieServiceImplTest {
     private static RequestTargetCalorie testTargetCalorieErrorDto(){
         return RequestTargetCalorie.builder()
                 .memberId(1L)
+                .dailyIntakePurpose(1)
+                .build();
+    }
+
+    private static UpdateTargetCalorie testUpdateTargetCalorieDto(){
+        return UpdateTargetCalorie.builder()
+                .Id(1L)
+                .dayTargetKcal(5000)
+                .dailyIntakePurpose(1)
+                .build();
+    }
+    private static UpdateTargetCalorie testUpdateTargetCalorieErrorDto(){
+        return UpdateTargetCalorie.builder()
+                .Id(1L)
                 .dailyIntakePurpose(1)
                 .build();
     }

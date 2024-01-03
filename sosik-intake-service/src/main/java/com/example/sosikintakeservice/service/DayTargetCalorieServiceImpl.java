@@ -1,6 +1,7 @@
 package com.example.sosikintakeservice.service;
 
 import com.example.sosikintakeservice.dto.request.RequestTargetCalorie;
+import com.example.sosikintakeservice.dto.request.UpdateTargetCalorie;
 import com.example.sosikintakeservice.exception.ApplicationException;
 import com.example.sosikintakeservice.exception.ErrorCode;
 import com.example.sosikintakeservice.model.entity.DayTargetCalorieEntity;
@@ -36,6 +37,15 @@ public class DayTargetCalorieServiceImpl implements DayTargetCalorieService{
             throw new ApplicationException(ErrorCode.EXISTENCE_TARGETCALORIE_ERROR);
         }
         return requestTargetCalorie;
+    }
+
+    @Override
+    public String updateDayTargetCalorie(UpdateTargetCalorie updateTargetCalorie){
+        DayTargetCalorieEntity dayTargetCalorieEntity = targetCalorieRepository.findById(updateTargetCalorie.Id()).orElseThrow(()->{
+            return new ApplicationException(ErrorCode.TARGETCALORIE_NOT_FOUND);
+        });
+        dayTargetCalorieEntity.updateTargetCalorie(updateTargetCalorie);
+        return "ok";
     }
 
 
