@@ -2,6 +2,7 @@ package com.example.sosikintakeservice.controller;
 
 
 import com.example.sosikintakeservice.dto.request.RequestTargetCalorie;
+import com.example.sosikintakeservice.dto.request.UpdateTargetCalorie;
 import com.example.sosikintakeservice.dto.response.Result;
 import com.example.sosikintakeservice.service.DayTargetCalorieService;
 import jakarta.validation.Valid;
@@ -18,6 +19,12 @@ public class TargetCalorieController {
     @PostMapping("")
     public Result<Void> createTargetCalorie(@RequestBody @Valid final RequestTargetCalorie requestTargetCalorie){
         dayTargetCalorieService.createTargetCalorie(requestTargetCalorie);
+        return Result.success();
+    }
+
+    @PatchMapping("")
+    public Result<Void> updateTargetCalorie(@RequestBody @Valid final UpdateTargetCalorie updateTargetCalorie){
+        dayTargetCalorieService.updateDayTargetCalorie(updateTargetCalorie);
         return Result.success();
     }
 
