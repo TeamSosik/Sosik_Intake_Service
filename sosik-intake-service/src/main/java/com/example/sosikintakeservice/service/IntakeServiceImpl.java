@@ -58,6 +58,12 @@ public class IntakeServiceImpl implements IntakeService{
                 }).collect(Collectors.toList());
     }
 
-
+    public String deleteIntake(Long intakeId) {
+        if(intakeRepository.findById(intakeId)==null){
+            throw new ApplicationException(ErrorCode.INTAKE_NOT_FOUND);
+        }
+        intakeRepository.deleteById(intakeId);
+        return "ok";
+    }
 
 }
