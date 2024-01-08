@@ -1,6 +1,7 @@
 package com.example.sosikintakeservice.controller;
 
 
+import com.example.sosikintakeservice.dto.request.RequestGetDayTargetCalorie;
 import com.example.sosikintakeservice.dto.request.RequestTargetCalorie;
 import com.example.sosikintakeservice.dto.request.UpdateTargetCalorie;
 import com.example.sosikintakeservice.dto.response.Result;
@@ -16,17 +17,22 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/target-calorie")
 public class TargetCalorieController {
     private final DayTargetCalorieService dayTargetCalorieService;
+
     @PostMapping("")
-    public Result<Void> createTargetCalorie(@RequestBody @Valid final RequestTargetCalorie requestTargetCalorie){
+    public Result<Void> createTargetCalorie(@RequestBody @Valid final RequestTargetCalorie requestTargetCalorie) {
         dayTargetCalorieService.createTargetCalorie(requestTargetCalorie);
         return Result.success();
     }
 
     @PatchMapping("")
-    public Result<Void> updateTargetCalorie(@RequestBody @Valid final UpdateTargetCalorie updateTargetCalorie){
+    public Result<Void> updateTargetCalorie(@RequestBody @Valid final UpdateTargetCalorie updateTargetCalorie) {
         dayTargetCalorieService.updateDayTargetCalorie(updateTargetCalorie);
         return Result.success();
     }
 
-
+    @GetMapping("")
+    public Result<Void> getTargetCalorie(@RequestHeader Long memberId, RequestGetDayTargetCalorie getDayTargetCalorie) {
+        dayTargetCalorieService.getDayTargetCalorie(getDayTargetCalorie);
+        return Result.success();
+    }
 }
