@@ -11,6 +11,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
@@ -21,7 +22,7 @@ public class AuditingFields {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     @CreatedDate
 //    @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt; // 생성일시
+    private LocalDate createdAt; // 생성일시
     @CreatedBy
 //    @Column(nullable = false, length = 100,updatable = false)
     private String createdBy; // 생성자

@@ -6,6 +6,6 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 
 @Builder
-public record RequestGetDayTargetCalorie(Long memberId,
+public record RequestGetDayTargetCalorie(
                                          LocalDateTime createdAt) {
 }

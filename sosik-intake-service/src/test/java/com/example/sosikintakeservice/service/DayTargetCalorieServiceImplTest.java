@@ -60,7 +60,7 @@ class DayTargetCalorieServiceImplTest {
     void givenTestTargetCalorieWhenCreateTargetCalorieThrowEXISTENCE_TARGETCALORIE_ERROR() {
 
         RequestTargetCalorie testTargetCalorieDto = testTargetCalorieErrorDto();
-        given(targetCalorieRepository.findTopByOrderByLastCreatedDateDesc()).willReturn(targetCalorieEntity);
+        given(targetCalorieRepository.findTopByOrderByCreatedAtDesc()).willReturn(targetCalorieEntity);
         when(targetCalorieEntity.get().getCreatedAt()).thenReturn(currentTime);
         given(lastCreatedDate).willReturn(LocalDateTime.now());
         assertThatThrownBy(() -> dayTargetCalorieService.createTargetCalorie(testTargetCalorieDto))
