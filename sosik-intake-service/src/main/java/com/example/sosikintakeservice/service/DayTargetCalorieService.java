@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface DayTargetCalorieService {
-//    RequestTargetCalorie createTargetCalorie(RequestTargetCalorie requestTargetCalorie);
+    RequestTargetCalorie createTargetCalorie(Long memberId, RequestTargetCalorie requestTargetCalorie);
 
     String updateDayTargetCalorie(UpdateTargetCalorie updateTargetCalorie);
 

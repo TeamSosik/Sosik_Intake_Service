@@ -23,11 +23,11 @@ import java.util.List;
 public class TargetCalorieController {
     private final DayTargetCalorieService dayTargetCalorieService;
 
-//    @PostMapping("")
-//    public Result<Void> createTargetCalorie(@RequestBody @Valid final RequestTargetCalorie requestTargetCalorie) {
-//        dayTargetCalorieService.createTargetCalorie(requestTargetCalorie);
-//        return Result.success();
-//    }
+    @PostMapping("/v1/")
+    public Result<Void> createTargetCalorie(@RequestHeader Long memberId, @RequestBody @Valid final RequestTargetCalorie requestTargetCalorie) {
+        dayTargetCalorieService.createTargetCalorie(memberId,requestTargetCalorie);
+        return Result.success();
+    }
 
     @PatchMapping("")
     public Result<Void> updateTargetCalorie(@RequestBody @Valid final UpdateTargetCalorie updateTargetCalorie) {

@@ -10,6 +10,7 @@ import com.example.sosikintakeservice.model.entity.DayTargetCalorieEntity;
 import com.example.sosikintakeservice.repository.TargetCalorieRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -27,25 +28,23 @@ import java.util.stream.Collectors;
 public class DayTargetCalorieServiceImpl implements DayTargetCalorieService {
     private final TargetCalorieRepository targetCalorieRepository;
 
-//    @Override
-//    public RequestTargetCalorie createTargetCalorie(RequestTargetCalorie requestTargetCalorie) {
-//        Optional<DayTargetCalorieEntity> entity = targetCalorieRepository.findTopByOrderByCreatedAtDesc();
-//        LocalDateTime currentTime = LocalDateTime.now();
-//        LocalDateTime lastCreatedDate = entity.get().getCreatedAt();
-//        if (entity.isEmpty() || (currentTime.getDayOfMonth() != lastCreatedDate.getDayOfMonth() &&
-//                currentTime.getMonth() != lastCreatedDate.getMonth() &&
-//                currentTime.getYear() != lastCreatedDate.getYear())) {  //오늘 기록을 안한 경우
-//            DayTargetCalorieEntity dayTargetCalorieEntity = DayTargetCalorieEntity.builder()
-//                    .memberId(requestTargetCalorie.memberId())
-//                    .dayTargetKcal(requestTargetCalorie.dayTargetKcal())
-//                    .dailyIntakePurpose(requestTargetCalorie.dailyIntakePurpose())
-//                    .build();
-//            targetCalorieRepository.save(dayTargetCalorieEntity);
-//        } else { //오늘 목표칼로리가 이미 입력했다면 에러발생
-//            throw new ApplicationException(ErrorCode.EXISTENCE_TARGETCALORIE_ERROR);
-//        }
-//        return requestTargetCalorie;
-//    }
+    @Override
+    public RequestTargetCalorie createTargetCalorie(Long memberId , RequestTargetCalorie requestTargetCalorie) {
+        LocalDate currentTime = LocalDate.now();
+        Optional<DayTargetCalorieEntity> entity = targetCalorieRepository.findByMemberIdAndCreatedAt(memberId,currentTime);
+        if (!entity.isEmpty()) {  //오늘 기록했다면
+            throw new ApplicationException(ErrorCode.EXISTENCE_TARGETCALORIE_ERROR);
+           
+        } else { //오늘 기록 안했다면
+            DayTargetCalorieEntity dayTargetCalorieEntity = DayTargetCalorieEntity.builder()
+                    .memberId(memberId)
+                    .dayTargetKcal(requestTargetCalorie.dayTargetKcal())
+                    .dailyIntakePurpose(requestTargetCalorie.dailyIntakePurpose())
+                    .build();
+            targetCalorieRepository.save(dayTargetCalorieEntity);
+        }
+        return requestTargetCalorie;
+    }
 
     @Override
     public String updateDayTargetCalorie(UpdateTargetCalorie updateTargetCalorie) {
@@ -61,13 +60,17 @@ public class DayTargetCalorieServiceImpl implements DayTargetCalorieService {
         DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate localDate = LocalDate.parse(today, inputFormatter);
 
-        DayTargetCalorieEntity dayTargetCalorieEntity = targetCalorieRepository.findByMemberIdAndCreatedAt(memberId, localDate);
+        Optional<DayTargetCalorieEntity> dayTargetCalorieEntity = targetCalorieRepository
+                .findByMemberIdAndCreatedAt(memberId, localDate);
 //        System.out.println(localDate.atStartOfDay());
+//        if(dayTargetCalorieEntity.isEmpty()){
+//            throw new ApplicationException(ErrorCode.TARGETCALORIE_NOT_FOUND);
+//        }
         System.out.println(localDate);
         System.out.println(dayTargetCalorieEntity);
         ResponseGetDayTargetCalorie responseGetDayTargetCalorie = ResponseGetDayTargetCalorie.builder()
-                .dayTargetKcal(dayTargetCalorieEntity.getDayTargetKcal())
-                .dailyIntakePurpose(dayTargetCalorieEntity.getDailyIntakePurpose())
+                .dayTargetKcal(dayTargetCalorieEntity.get().getDayTargetKcal())
+                .dailyIntakePurpose(dayTargetCalorieEntity.get().getDailyIntakePurpose())
                 .build();
         return responseGetDayTargetCalorie;
     }
