@@ -9,6 +9,8 @@ import com.example.sosikintakeservice.dto.response.redis.RedisFoodRepository;
 import com.example.sosikintakeservice.exception.ApplicationException;
 import com.example.sosikintakeservice.exception.ErrorCode;
 import com.example.sosikintakeservice.model.entity.IntakeEntity;
+import com.example.sosikintakeservice.redis.RedisFood;
+import com.example.sosikintakeservice.redis.RedisFoodRepository;
 import com.example.sosikintakeservice.repository.IntakeRepository;
 import com.example.sosikintakeservice.service.redis.RedisIntakeService;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +19,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.Collections;
+import java.time.LocalDateTime;
+
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -30,7 +34,6 @@ public class IntakeServiceImpl implements IntakeService{
     private final IntakeRepository intakeRepository;
     private final RedisIntakeService redisIntakeService;
     private final RedisFoodRepository redisFoodRepository;
-
 
     public String createIntake(RequestIntake intakeDTO) {
         IntakeEntity intake = IntakeEntity.builder()
@@ -49,24 +52,37 @@ public class IntakeServiceImpl implements IntakeService{
         return "ok";
     }
 
-    public List<ResponseGetIntake> getIntakes(RequestGetIntake requestgetIntake) {
-        List<IntakeEntity> intakeEntities = intakeRepository.findByMemberIdAndCreatedAt(requestgetIntake.memberId(),
-                requestgetIntake.createdAt());
-
+    public List<ResponseGetIntake> getIntakes(Long memberId, LocalDate createdAt) {
+        List<IntakeEntity> intakeEntities = intakeRepository.findByMemberIdAndCreatedAt(memberId,createdAt);
+        System.out.println(intakeEntities);
         return intakeEntities.stream()
                 .map(intakeEntity -> {
-                    return ResponseGetIntake.builder()
-                            .memberId(intakeEntity.getMemberId())
-                            .foodId(intakeEntity.getFoodId())
-                            .dayTargetCalorieId(intakeEntity.getDayTargetCalorieId())
-                            .calculationCarbo(intakeEntity.getCalculationCarbo())
-                            .calculationProtein(intakeEntity.getCalculationProtein())
-                            .calculationFat(intakeEntity.getCalculationFat())
-                            .calculationKcal(intakeEntity.getCalculationKcal())
-                            .foodAmount(intakeEntity.getFoodAmount())
-                            .category(intakeEntity.getCategory())
-                            .build();
-                }).collect(Collectors.toList());
+                    Optional<RedisFood> optionalRedisFood = redisFoodRepository.findById(intakeEntity.getFoodId());
+                    if (optionalRedisFood.isPresent()) {
+                        RedisFood redisFood = optionalRedisFood.get();
+
+                        String name = redisFood.getName();
+                        System.out.println("==========================");
+                        System.out.println(name);
+                        System.out.println(optionalRedisFood);
+
+                        return ResponseGetIntake.builder()
+                                .memberId(intakeEntity.getMemberId())
+                                .foodId(intakeEntity.getFoodId())
+                                .name(redisFood.getName())
+                                .dayTargetCalorieId(intakeEntity.getDayTargetCalorieId())
+                                .calculationCarbo(intakeEntity.getCalculationCarbo())
+                                .calculationProtein(intakeEntity.getCalculationProtein())
+                                .calculationFat(intakeEntity.getCalculationFat())
+                                .calculationKcal(intakeEntity.getCalculationKcal())
+                                .foodAmount(intakeEntity.getFoodAmount())
+                                .category(intakeEntity.getCategory())
+                                .build();
+                    } else {
+                        return null;
+                    }
+                })
+                .collect(Collectors.toList());
     }
 
     public String deleteIntake(Long intakeId) {

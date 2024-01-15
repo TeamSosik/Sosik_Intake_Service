@@ -1,16 +1,28 @@
 package com.example.sosikintakeservice.config;
 
-import com.example.sosikintakeservice.dto.response.redis.RedisFood;
+
+import com.example.sosikintakeservice.redis.RedisFood;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
+
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.RedisKeyValueAdapter;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
+
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
+@EnableRedisRepositories(
+    enableKeyspaceEvents =
+            RedisKeyValueAdapter
+                    .EnableKeyspaceEvents.ON_STARTUP // ttl에 의해 관련키(Indexed로 생성된) 모두 삭제된다.
+)
 public class RedisConfig {
 
     @Value(value = "${spring.data.redis.host}")
@@ -49,23 +61,14 @@ public class RedisConfig {
         return redisTemplate;
     }
 
-    // redisFoctory 생성
+    // redisFactory 생성
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
 
-        LettuceConnectionFactory lettuceConnectionFactory = new LettuceConnectionFactory(host, port);
+        LettuceConnectionFactory lettuceConnectionFactory =
+                new LettuceConnectionFactory(host, port);
         lettuceConnectionFactory.setPassword(password);
 
         return lettuceConnectionFactory;
-
-
     }
-
-
-
-
-
-
-
-
 }

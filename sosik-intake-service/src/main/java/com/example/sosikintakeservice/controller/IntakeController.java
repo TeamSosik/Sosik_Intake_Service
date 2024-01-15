@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -25,9 +26,10 @@ public class IntakeController {
         intakeService.createIntake(intake);
         return Result.success();
     }
-    @GetMapping("/")
-    public Result<List<ResponseGetIntake>> getIntakes(@RequestBody final RequestGetIntake requestgetIntake) {
-        List<ResponseGetIntake> responseGetIntakes = intakeService.getIntakes(requestgetIntake);
+
+    @GetMapping("/{createdAt}")
+    public Result<List<ResponseGetIntake>> getIntakes(@RequestHeader Long memberId, @PathVariable final LocalDate createdAt) {
+        List<ResponseGetIntake> responseGetIntakes = intakeService.getIntakes(memberId,createdAt);
         return Result.success(responseGetIntakes);
     }
 

@@ -5,7 +5,6 @@ import lombok.Builder;
 
 @Builder
 public record ResponseGetDayTargetCalorie(
-//        Long memberId,
         Integer dayTargetKcal,
         Integer dailyIntakePurpose
 ) {

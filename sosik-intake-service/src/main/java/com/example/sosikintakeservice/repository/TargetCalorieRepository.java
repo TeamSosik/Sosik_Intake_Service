@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface TargetCalorieRepository extends JpaRepository<DayTargetCalorieEntity, Long> {
-    Optional<DayTargetCalorieEntity> findTopByOrderByCreatedAtDesc();
 
-    DayTargetCalorieEntity findByMemberIdAndCreatedAt(Long memberId, LocalDate localDate);
+    Optional<DayTargetCalorieEntity> findByMemberIdAndCreatedAt(Long memberId, LocalDate localDate);
 }

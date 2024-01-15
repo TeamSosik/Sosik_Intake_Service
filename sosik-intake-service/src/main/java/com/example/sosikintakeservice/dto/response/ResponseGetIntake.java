@@ -12,6 +12,7 @@ import java.math.BigDecimal;
 public record ResponseGetIntake(
         Long memberId,
         Long foodId,
+        String name,
         Long dayTargetCalorieId,
         BigDecimal calculationCarbo,
         BigDecimal calculationProtein,

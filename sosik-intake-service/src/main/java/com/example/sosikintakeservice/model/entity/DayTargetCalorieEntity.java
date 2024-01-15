@@ -22,18 +22,16 @@ public class DayTargetCalorieEntity extends AuditingFields{
     @Column(nullable = false)
     private Integer dayTargetKcal;
 
-    @Column(nullable = false)
-    private Integer dailyIntakePurpose;
 
     @Builder
     public DayTargetCalorieEntity(
             final Long memberId,
-            final Integer dayTargetKcal,
-            final Integer dailyIntakePurpose
-    ){};
+            final Integer dayTargetKcal
+    ){  this.memberId = memberId;
+        this.dayTargetKcal = dayTargetKcal;
+    }
 
     public void updateTargetCalorie(UpdateTargetCalorie updateTargetCalorie) {
         this.dayTargetKcal = updateTargetCalorie.dayTargetKcal();
-        this.dailyIntakePurpose = updateTargetCalorie.dailyIntakePurpose();
     }
 }
