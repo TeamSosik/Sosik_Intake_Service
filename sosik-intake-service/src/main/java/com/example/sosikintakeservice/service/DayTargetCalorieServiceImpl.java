@@ -1,6 +1,5 @@
 package com.example.sosikintakeservice.service;
 
-import com.example.sosikintakeservice.dto.request.RequestGetDayTargetCalorie;
 import com.example.sosikintakeservice.dto.request.RequestTargetCalorie;
 import com.example.sosikintakeservice.dto.request.UpdateTargetCalorie;
 import com.example.sosikintakeservice.dto.response.ResponseGetDayTargetCalorie;
@@ -10,17 +9,10 @@ import com.example.sosikintakeservice.model.entity.DayTargetCalorieEntity;
 import com.example.sosikintakeservice.repository.TargetCalorieRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
 
-import javax.print.attribute.standard.MediaSize;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -40,7 +32,6 @@ public class DayTargetCalorieServiceImpl implements DayTargetCalorieService {
             DayTargetCalorieEntity dayTargetCalorieEntity = DayTargetCalorieEntity.builder()
                     .memberId(memberId)
                     .dayTargetKcal(requestTargetCalorie.dayTargetKcal())
-                    .dailyIntakePurpose(requestTargetCalorie.dailyIntakePurpose())
                     .build();
             targetCalorieRepository.save(dayTargetCalorieEntity);
         }
@@ -72,7 +63,6 @@ public class DayTargetCalorieServiceImpl implements DayTargetCalorieService {
         else {
             ResponseGetDayTargetCalorie responseGetDayTargetCalorie = ResponseGetDayTargetCalorie.builder()
                     .dayTargetKcal(dayTargetCalorieEntity.getDayTargetKcal())
-                    .dailyIntakePurpose(dayTargetCalorieEntity.getDailyIntakePurpose())
                     .build();
             return responseGetDayTargetCalorie;
         }
