@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 public class RedisIntakeService {
 
     private final RedisTemplate<String, String> redisTemplate;
-    private String KEY_PREFIX = "IntakeRank";
+    private final String KEY_PREFIX = "IntakeRank";
     private long expiredTime = 60 * 10;// 10분
 
 
