@@ -90,6 +90,9 @@ public class IntakeServiceImpl implements IntakeService{
         if(intakeList.isEmpty()) {
             return Collections.emptyList();
         }
+        // redis에 기존 데이터 있으면 삭제하기
+        redisIntakeService.delete(memberId, period);
+
         // redis에 데이터 저장하기
         intakeList.stream()
                 .forEach((intake) -> {

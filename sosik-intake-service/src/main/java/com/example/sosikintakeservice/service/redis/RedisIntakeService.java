@@ -55,4 +55,13 @@ public class RedisIntakeService {
         // 역순으로 rank 불러오기
         return redisTemplate.opsForZSet().reverseRangeWithScores(key, 0, -1);
     }
+
+    public void delete(Long memberId, Integer period) {
+
+        // key 생성하기
+        String key = getKey(memberId, period);
+
+        // key 삭제하기
+        redisTemplate.delete(key);
+    }
 }
