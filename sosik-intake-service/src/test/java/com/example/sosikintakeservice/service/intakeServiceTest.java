@@ -3,19 +3,30 @@ package com.example.sosikintakeservice.service;
 import com.example.sosikintakeservice.dto.request.RequestGetFoodInfo;
 import com.example.sosikintakeservice.dto.request.RequestIntake;
 import com.example.sosikintakeservice.dto.response.ResponseGetIntake;
-import com.example.sosikintakeservice.dto.response.Result;
+import com.example.sosikintakeservice.dto.response.ResponseGetIntakeRank;
+import com.example.sosikintakeservice.dto.response.redis.RedisFood;
+import com.example.sosikintakeservice.dto.response.redis.RedisFoodRepository;
 import com.example.sosikintakeservice.exception.ApplicationException;
 import com.example.sosikintakeservice.model.entity.Category;
+import com.example.sosikintakeservice.model.entity.IntakeEntity;
 import com.example.sosikintakeservice.repository.IntakeRepository;
+import com.example.sosikintakeservice.service.redis.RedisIntakeService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.data.redis.core.ZSetOperations;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -26,11 +37,15 @@ import static org.mockito.BDDMockito.given;
 public class intakeServiceTest {
 
     @InjectMocks
-    private IntakeService intakeService;
+    private IntakeServiceImpl intakeService;
     @Mock
     private IntakeRepository intakeRepository;
     private ResponseGetIntake expectedResponse = testgetIntakeDTO();
     private static Category category;
+    @Mock
+    private RedisIntakeService redisIntakeService;
+    @Mock
+    private RedisFoodRepository redisFoodRepository;
 
     @DisplayName("섭취 음식 생성시 정상적으로 작동된다.")
     @Test
@@ -116,6 +131,186 @@ public class intakeServiceTest {
                 .category(category)
                 .foodAmount(150)
                 .build();
+    }
+
+    @DisplayName("db데이터죄회시_데이터가없으면_빈값을반환")
+    @Test
+    void givenEmptyArrayListWhenFindIntakeListThenSize0() {
+
+        // given
+        Long memberId = 1L;
+        int period = 30;
+        LocalDate start = LocalDate.now();
+        LocalDate end = LocalDate.now().minusDays(30);
+
+        Mockito.doReturn(new ArrayList<>())
+                .when(intakeRepository)
+                .findByMemberIdAndCreatedAtBetween(memberId, start, end);
+
+        // when
+        List<ResponseGetIntakeRank> result = intakeService.getRankList(memberId, period);
+
+        // then
+        assertThat(result.size()).isEqualTo(0);
+
+    }
+
+    @DisplayName("섭취목록조회시_데이터가있으면_레디스에저장_레디스에저장되지않은멤버")
+    @Test
+    void givenNotExistingIntakeRankWhenGetIntakeRankListThenIntakeRankList() {
+
+        // given
+        Long memberId = 1L;
+        int period = 30;
+        LocalDate start = LocalDate.now();
+        LocalDate end = LocalDate.now().minusDays(30);
+
+        Long intakeId1 = 1L;
+        Long intakeId2 = 12L;
+        Long intakeId3 = 13L;
+
+        Mockito.doReturn(
+                        List.of(
+                                IntakeEntity.builder().id(intakeId1).build(),
+                                IntakeEntity.builder().id(intakeId2).build(),
+                                IntakeEntity.builder().id(intakeId3).build()
+                        )
+                )
+                .when(intakeRepository)
+                .findByMemberIdAndCreatedAtBetween(memberId, start, end);
+
+        Mockito.doReturn(null)
+                .when(redisIntakeService)
+                .getScore(memberId, intakeId1, period);
+        Mockito.doReturn(null)
+                .when(redisIntakeService)
+                .getScore(memberId, intakeId2, period);
+        Mockito.doReturn(null)
+                .when(redisIntakeService)
+                .getScore(memberId, intakeId3, period);
+
+        Set<ZSetOperations.TypedTuple<String>> setTypedTuple = new HashSet<>();
+
+        ZSetOperations.TypedTuple<String> e1 = ZSetOperations.TypedTuple.of(String.valueOf(intakeId1), Double.valueOf(1));
+        ZSetOperations.TypedTuple<String> e2 = ZSetOperations.TypedTuple.of(String.valueOf(intakeId2), Double.valueOf(1));
+        ZSetOperations.TypedTuple<String> e3 = ZSetOperations.TypedTuple.of(String.valueOf(intakeId3), Double.valueOf(1));
+        setTypedTuple.add(e1);
+        setTypedTuple.add(e2);
+        setTypedTuple.add(e3);
+
+        Mockito.doReturn(setTypedTuple)
+                .when(redisIntakeService)
+                .getRankRangeSet(memberId, period);
+        Mockito.doReturn(
+                        Optional.of(RedisFood.builder()
+                                .name("food1")
+                                .build())
+                )
+                .when(redisFoodRepository)
+                .findById(intakeId1);
+        Mockito.doReturn(
+                        Optional.of(RedisFood.builder()
+                                .name("food2")
+                                .build())
+                )
+                .when(redisFoodRepository)
+                .findById(intakeId2);
+        Mockito.doReturn(
+                        Optional.of(RedisFood.builder()
+                                .name("food3")
+                                .build())
+                )
+                .when(redisFoodRepository)
+                .findById(intakeId3);
+
+        // when
+        List<ResponseGetIntakeRank> result = intakeService.getRankList(memberId, period);
+
+        // then
+        assertThat(result.size()).isEqualTo(3);
+        assertThat(result.get(0).value()).isEqualTo(1);
+        assertThat(result.get(1).value()).isEqualTo(1);
+        assertThat(result.get(2).value()).isEqualTo(1);
+
+    }
+
+    @DisplayName("섭취목록조회시_데이터가있으면_레디스에저장_레디스에저장되어있는멤버")
+    @Test
+    void givenExistingIntakeRankWhenGetIntakeRankListThenIntakeRankList() {
+
+        // given
+        Long memberId = 1L;
+        int period = 30;
+        LocalDate start = LocalDate.now();
+        LocalDate end = LocalDate.now().minusDays(30);
+
+        Long intakeId1 = 1L;
+        Long intakeId2 = 12L;
+        Long intakeId3 = 13L;
+
+        Mockito.doReturn(
+                        List.of(
+                                IntakeEntity.builder().id(intakeId1).build(),
+                                IntakeEntity.builder().id(intakeId2).build(),
+                                IntakeEntity.builder().id(intakeId3).build()
+                        )
+                )
+                .when(intakeRepository)
+                .findByMemberIdAndCreatedAtBetween(memberId, start, end);
+
+        Mockito.doReturn(Double.valueOf(2))
+                .when(redisIntakeService)
+                .getScore(memberId, intakeId3, period);
+        Mockito.doReturn(null)
+                .when(redisIntakeService)
+                .getScore(memberId, intakeId2, period);
+        Mockito.doReturn(null)
+                .when(redisIntakeService)
+                .getScore(memberId, intakeId1, period);
+
+        Set<ZSetOperations.TypedTuple<String>> setTypedTuple = new HashSet<>();
+
+        ZSetOperations.TypedTuple<String> e1 = ZSetOperations.TypedTuple.of(String.valueOf(intakeId1), Double.valueOf(1));
+        ZSetOperations.TypedTuple<String> e2 = ZSetOperations.TypedTuple.of(String.valueOf(intakeId2), Double.valueOf(1));
+        ZSetOperations.TypedTuple<String> e3 = ZSetOperations.TypedTuple.of(String.valueOf(intakeId3), Double.valueOf(3));
+        setTypedTuple.add(e1);
+        setTypedTuple.add(e2);
+        setTypedTuple.add(e3);
+
+        Mockito.doReturn(setTypedTuple)
+                .when(redisIntakeService)
+                .getRankRangeSet(memberId, period);
+        Mockito.doReturn(
+                        Optional.of(RedisFood.builder()
+                                .name("food1")
+                                .build())
+                )
+                .when(redisFoodRepository)
+                .findById(intakeId1);
+        Mockito.doReturn(
+                        Optional.of(RedisFood.builder()
+                                .name("food2")
+                                .build())
+                )
+                .when(redisFoodRepository)
+                .findById(intakeId2);
+        Mockito.doReturn(
+                        Optional.of(RedisFood.builder()
+                                .name("food3")
+                                .build())
+                )
+                .when(redisFoodRepository)
+                .findById(intakeId3);
+
+        // when
+        List<ResponseGetIntakeRank> result = intakeService.getRankList(memberId, period);
+
+        // then
+        assertThat(result.size()).isEqualTo(3);
+        assertThat(result.get(0).value()).isEqualTo(1);
+        assertThat(result.get(1).value()).isEqualTo(1);
+        assertThat(result.get(2).value()).isEqualTo(3);
+
     }
 
 
