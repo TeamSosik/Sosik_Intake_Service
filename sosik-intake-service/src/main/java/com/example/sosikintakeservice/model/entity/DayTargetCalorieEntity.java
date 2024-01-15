@@ -30,7 +30,10 @@ public class DayTargetCalorieEntity extends AuditingFields{
             final Long memberId,
             final Integer dayTargetKcal,
             final Integer dailyIntakePurpose
-    ){};
+    ){  this.memberId = memberId;
+        this.dayTargetKcal = dayTargetKcal;
+        this.dailyIntakePurpose = dailyIntakePurpose;
+    }
 
     public void updateTargetCalorie(UpdateTargetCalorie updateTargetCalorie) {
         this.dayTargetKcal = updateTargetCalorie.dayTargetKcal();

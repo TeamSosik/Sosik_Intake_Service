@@ -25,7 +25,7 @@ public class IntakeController {
         return Result.success();
     }
     @GetMapping("/")
-    public Result<List<ResponseGetIntake>> getIntakes(@RequestBody final RequestGetIntake requestgetIntake) {
+    public Result<List<ResponseGetIntake>> getIntakes(final RequestGetIntake requestgetIntake) {
         List<ResponseGetIntake> responseGetIntakes = intakeService.getIntakes(requestgetIntake);
         return Result.success(responseGetIntakes);
     }

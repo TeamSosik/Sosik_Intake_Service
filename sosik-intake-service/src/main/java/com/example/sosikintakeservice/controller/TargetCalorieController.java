@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -24,7 +25,7 @@ public class TargetCalorieController {
     private final DayTargetCalorieService dayTargetCalorieService;
 
     @PostMapping("/v1/")
-    public Result<Void> createTargetCalorie(@RequestHeader Long memberId, @RequestBody @Valid final RequestTargetCalorie requestTargetCalorie) {
+    public Result<Void> createTargetCalorie(@RequestHeader Long memberId, @RequestBody @Valid  final RequestTargetCalorie requestTargetCalorie) {
         dayTargetCalorieService.createTargetCalorie(memberId,requestTargetCalorie);
         return Result.success();
     }
@@ -38,7 +39,12 @@ public class TargetCalorieController {
     @GetMapping("/v1/{today}")
     public Result<ResponseGetDayTargetCalorie> getTargetCalorie(@RequestHeader Long memberId, @PathVariable String today) {
         ResponseGetDayTargetCalorie dayTargetCalorie = dayTargetCalorieService.getDayTargetCalorie(memberId,today);
-        System.out.println(today+memberId);
-        return Result.success(dayTargetCalorie);
+        System.out.println(today);
+        if(dayTargetCalorie==null){
+            return Result.success(null);
+        }
+        else{
+            return Result.success(dayTargetCalorie);
+        }
     }
 }

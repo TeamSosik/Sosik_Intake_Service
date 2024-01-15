@@ -31,8 +31,9 @@ public class DayTargetCalorieServiceImpl implements DayTargetCalorieService {
     @Override
     public RequestTargetCalorie createTargetCalorie(Long memberId , RequestTargetCalorie requestTargetCalorie) {
         LocalDate currentTime = LocalDate.now();
-        Optional<DayTargetCalorieEntity> entity = targetCalorieRepository.findByMemberIdAndCreatedAt(memberId,currentTime);
-        if (!entity.isEmpty()) {  //오늘 기록했다면
+        DayTargetCalorieEntity entity = targetCalorieRepository
+                .findByMemberIdAndCreatedAt(memberId,currentTime).orElse(null);
+        if (entity != null) {  //오늘 기록했다면
             throw new ApplicationException(ErrorCode.EXISTENCE_TARGETCALORIE_ERROR);
            
         } else { //오늘 기록 안했다면
@@ -60,18 +61,20 @@ public class DayTargetCalorieServiceImpl implements DayTargetCalorieService {
         DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate localDate = LocalDate.parse(today, inputFormatter);
 
-        Optional<DayTargetCalorieEntity> dayTargetCalorieEntity = targetCalorieRepository
-                .findByMemberIdAndCreatedAt(memberId, localDate);
-//        System.out.println(localDate.atStartOfDay());
-//        if(dayTargetCalorieEntity.isEmpty()){
-//            throw new ApplicationException(ErrorCode.TARGETCALORIE_NOT_FOUND);
-//        }
+        DayTargetCalorieEntity dayTargetCalorieEntity = targetCalorieRepository
+                .findByMemberIdAndCreatedAt(memberId, localDate).orElse(null);
         System.out.println(localDate);
         System.out.println(dayTargetCalorieEntity);
-        ResponseGetDayTargetCalorie responseGetDayTargetCalorie = ResponseGetDayTargetCalorie.builder()
-                .dayTargetKcal(dayTargetCalorieEntity.get().getDayTargetKcal())
-                .dailyIntakePurpose(dayTargetCalorieEntity.get().getDailyIntakePurpose())
-                .build();
-        return responseGetDayTargetCalorie;
+        if (dayTargetCalorieEntity==null){
+            ResponseGetDayTargetCalorie responseGetDayTargetCalorie = null;
+            return responseGetDayTargetCalorie;
+        }
+        else {
+            ResponseGetDayTargetCalorie responseGetDayTargetCalorie = ResponseGetDayTargetCalorie.builder()
+                    .dayTargetKcal(dayTargetCalorieEntity.getDayTargetKcal())
+                    .dailyIntakePurpose(dayTargetCalorieEntity.getDailyIntakePurpose())
+                    .build();
+            return responseGetDayTargetCalorie;
+        }
     }
 }
