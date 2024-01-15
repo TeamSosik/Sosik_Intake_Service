@@ -34,7 +34,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
-public class intakeServiceTest {
+public class IntakeServiceTest {
 
     @InjectMocks
     private IntakeServiceImpl intakeService;
