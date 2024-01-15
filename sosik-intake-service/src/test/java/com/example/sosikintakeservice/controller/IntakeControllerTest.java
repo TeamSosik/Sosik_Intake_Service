@@ -122,10 +122,10 @@ public class IntakeControllerTest {
         Mockito.doReturn(
                         List.of(
                                 ResponseGetIntakeRank.builder()
-                                        .intakeId(1L)
+                                        .foodId(1L)
                                         .build(),
                                 ResponseGetIntakeRank.builder()
-                                        .intakeId(2L)
+                                        .foodId(2L)
                                         .build()
                         )
                 )
