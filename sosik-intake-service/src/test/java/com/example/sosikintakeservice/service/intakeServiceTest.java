@@ -140,8 +140,8 @@ public class intakeServiceTest {
         // given
         Long memberId = 1L;
         int period = 30;
-        LocalDate start = LocalDate.now();
-        LocalDate end = LocalDate.now().minusDays(30);
+        LocalDate start = LocalDate.now().minusDays(30);
+        LocalDate end = LocalDate.now();
 
         Mockito.doReturn(new ArrayList<>())
                 .when(intakeRepository)
@@ -162,18 +162,18 @@ public class intakeServiceTest {
         // given
         Long memberId = 1L;
         int period = 30;
-        LocalDate start = LocalDate.now();
-        LocalDate end = LocalDate.now().minusDays(30);
+        LocalDate start = LocalDate.now().minusDays(30);
+        LocalDate end = LocalDate.now();
 
-        Long intakeId1 = 1L;
-        Long intakeId2 = 12L;
-        Long intakeId3 = 13L;
+        Long foodId1 = 1L;
+        Long foodId2 = 12L;
+        Long foodId3 = 13L;
 
         Mockito.doReturn(
                         List.of(
-                                IntakeEntity.builder().id(intakeId1).build(),
-                                IntakeEntity.builder().id(intakeId2).build(),
-                                IntakeEntity.builder().id(intakeId3).build()
+                                IntakeEntity.builder().foodId(foodId1).build(),
+                                IntakeEntity.builder().foodId(foodId2).build(),
+                                IntakeEntity.builder().foodId(foodId3).build()
                         )
                 )
                 .when(intakeRepository)
@@ -181,19 +181,19 @@ public class intakeServiceTest {
 
         Mockito.doReturn(null)
                 .when(redisIntakeService)
-                .getScore(memberId, intakeId1, period);
+                .getScore(memberId, foodId1, period);
         Mockito.doReturn(null)
                 .when(redisIntakeService)
-                .getScore(memberId, intakeId2, period);
+                .getScore(memberId, foodId2, period);
         Mockito.doReturn(null)
                 .when(redisIntakeService)
-                .getScore(memberId, intakeId3, period);
+                .getScore(memberId, foodId3, period);
 
         Set<ZSetOperations.TypedTuple<String>> setTypedTuple = new HashSet<>();
 
-        ZSetOperations.TypedTuple<String> e1 = ZSetOperations.TypedTuple.of(String.valueOf(intakeId1), Double.valueOf(1));
-        ZSetOperations.TypedTuple<String> e2 = ZSetOperations.TypedTuple.of(String.valueOf(intakeId2), Double.valueOf(1));
-        ZSetOperations.TypedTuple<String> e3 = ZSetOperations.TypedTuple.of(String.valueOf(intakeId3), Double.valueOf(1));
+        ZSetOperations.TypedTuple<String> e1 = ZSetOperations.TypedTuple.of(String.valueOf(foodId1), Double.valueOf(1));
+        ZSetOperations.TypedTuple<String> e2 = ZSetOperations.TypedTuple.of(String.valueOf(foodId2), Double.valueOf(1));
+        ZSetOperations.TypedTuple<String> e3 = ZSetOperations.TypedTuple.of(String.valueOf(foodId3), Double.valueOf(1));
         setTypedTuple.add(e1);
         setTypedTuple.add(e2);
         setTypedTuple.add(e3);
@@ -207,21 +207,21 @@ public class intakeServiceTest {
                                 .build())
                 )
                 .when(redisFoodRepository)
-                .findById(intakeId1);
+                .findById(foodId1);
         Mockito.doReturn(
                         Optional.of(RedisFood.builder()
                                 .name("food2")
                                 .build())
                 )
                 .when(redisFoodRepository)
-                .findById(intakeId2);
+                .findById(foodId2);
         Mockito.doReturn(
                         Optional.of(RedisFood.builder()
                                 .name("food3")
                                 .build())
                 )
                 .when(redisFoodRepository)
-                .findById(intakeId3);
+                .findById(foodId3);
 
         // when
         List<ResponseGetIntakeRank> result = intakeService.getRankList(memberId, period);
@@ -241,18 +241,18 @@ public class intakeServiceTest {
         // given
         Long memberId = 1L;
         int period = 30;
-        LocalDate start = LocalDate.now();
-        LocalDate end = LocalDate.now().minusDays(30);
+        LocalDate start = LocalDate.now().minusDays(30);
+        LocalDate end = LocalDate.now();
 
-        Long intakeId1 = 1L;
-        Long intakeId2 = 12L;
-        Long intakeId3 = 13L;
+        Long foodId1 = 1L;
+        Long foodId2 = 12L;
+        Long foodId3 = 13L;
 
         Mockito.doReturn(
                         List.of(
-                                IntakeEntity.builder().id(intakeId1).build(),
-                                IntakeEntity.builder().id(intakeId2).build(),
-                                IntakeEntity.builder().id(intakeId3).build()
+                                IntakeEntity.builder().foodId(foodId1).build(),
+                                IntakeEntity.builder().foodId(foodId2).build(),
+                                IntakeEntity.builder().foodId(foodId3).build()
                         )
                 )
                 .when(intakeRepository)
@@ -260,19 +260,19 @@ public class intakeServiceTest {
 
         Mockito.doReturn(Double.valueOf(2))
                 .when(redisIntakeService)
-                .getScore(memberId, intakeId3, period);
+                .getScore(memberId, foodId3, period);
         Mockito.doReturn(null)
                 .when(redisIntakeService)
-                .getScore(memberId, intakeId2, period);
+                .getScore(memberId, foodId2, period);
         Mockito.doReturn(null)
                 .when(redisIntakeService)
-                .getScore(memberId, intakeId1, period);
+                .getScore(memberId, foodId1, period);
 
         Set<ZSetOperations.TypedTuple<String>> setTypedTuple = new HashSet<>();
 
-        ZSetOperations.TypedTuple<String> e1 = ZSetOperations.TypedTuple.of(String.valueOf(intakeId1), Double.valueOf(1));
-        ZSetOperations.TypedTuple<String> e2 = ZSetOperations.TypedTuple.of(String.valueOf(intakeId2), Double.valueOf(1));
-        ZSetOperations.TypedTuple<String> e3 = ZSetOperations.TypedTuple.of(String.valueOf(intakeId3), Double.valueOf(3));
+        ZSetOperations.TypedTuple<String> e1 = ZSetOperations.TypedTuple.of(String.valueOf(foodId1), Double.valueOf(1));
+        ZSetOperations.TypedTuple<String> e2 = ZSetOperations.TypedTuple.of(String.valueOf(foodId2), Double.valueOf(1));
+        ZSetOperations.TypedTuple<String> e3 = ZSetOperations.TypedTuple.of(String.valueOf(foodId3), Double.valueOf(3));
         setTypedTuple.add(e1);
         setTypedTuple.add(e2);
         setTypedTuple.add(e3);
@@ -286,21 +286,21 @@ public class intakeServiceTest {
                                 .build())
                 )
                 .when(redisFoodRepository)
-                .findById(intakeId1);
+                .findById(foodId1);
         Mockito.doReturn(
                         Optional.of(RedisFood.builder()
                                 .name("food2")
                                 .build())
                 )
                 .when(redisFoodRepository)
-                .findById(intakeId2);
+                .findById(foodId2);
         Mockito.doReturn(
                         Optional.of(RedisFood.builder()
                                 .name("food3")
                                 .build())
                 )
                 .when(redisFoodRepository)
-                .findById(intakeId3);
+                .findById(foodId3);
 
         // when
         List<ResponseGetIntakeRank> result = intakeService.getRankList(memberId, period);

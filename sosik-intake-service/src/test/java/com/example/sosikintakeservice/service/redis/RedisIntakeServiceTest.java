@@ -1,7 +1,5 @@
 package com.example.sosikintakeservice.service.redis;
 
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +13,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.InstanceOfAssertFactories.DOUBLE;
 
 @SpringBootTest
 public class RedisIntakeServiceTest {
@@ -48,19 +45,19 @@ public class RedisIntakeServiceTest {
         // given
         Long memberId = 1L;
         Integer period = 30;
-        Long intakeId = 2L;
+        Long foodId = 2L;
         String keyPrefix = "IntakeRank";
         int score = 2;
 
         String key = keyPrefix + ":" + memberId + ":" + period;
-        String stringIntakeId = String.valueOf(intakeId);
-        redisTemplate.opsForZSet().add(key, stringIntakeId, score);
+        String stringFoodId = String.valueOf(foodId);
+        redisTemplate.opsForZSet().add(key, stringFoodId, score);
 
 
         // when
-        Long notIntakeId = 3L;
+        Long notFoodId = 3L;
 //        Double findScore = redisTemplate.opsForZSet().score(key, findStringIntakeId);
-        Double findScore = redisIntakeService.getScore(memberId, notIntakeId, period);
+        Double findScore = redisIntakeService.getScore(memberId, notFoodId, period);
 
         // then
         assertThat(findScore).isNull();
@@ -81,12 +78,12 @@ public class RedisIntakeServiceTest {
         int score = 1;
 
         String key = keyPrefix + ":" + memberId + ":" + period;
-        String stringIntakeId = String.valueOf(intakeId);
-        redisTemplate.opsForZSet().add(key, stringIntakeId, score);
+        String stringFoodId = String.valueOf(intakeId);
+        redisTemplate.opsForZSet().add(key, stringFoodId, score);
 
         // when
-        Long findIntakeId = 2L;
-        Double findScore = redisIntakeService.getScore(memberId, findIntakeId, period);
+        Long findFoodId = 2L;
+        Double findScore = redisIntakeService.getScore(memberId, findFoodId, period);
 
         // then
         assertThat(findScore).isNotNull();
@@ -103,16 +100,16 @@ public class RedisIntakeServiceTest {
         // given
         Long memberId = 1L;
         int period = 20;
-        Long intakeId = 1L;
+        Long foodId = 1L;
         Integer value = 2;
 
         // when
-        redisIntakeService.save(memberId, intakeId, period, value);
+        redisIntakeService.save(memberId, foodId, period, value);
 
         String key = "IntakeRank" + ":" + memberId + ":" + period;
 
-        String findIntakeId = String.valueOf(intakeId);
-        Double findScore = redisTemplate.opsForZSet().score(key, findIntakeId);
+        String findFoodId = String.valueOf(foodId);
+        Double findScore = redisTemplate.opsForZSet().score(key, findFoodId);
         // then
         assertThat(findScore).isNotNull();
         assertThat(findScore).isEqualTo(Double.valueOf(value));
@@ -131,18 +128,18 @@ public class RedisIntakeServiceTest {
         String keyPrefix = "IntakeRank";
         String key = keyPrefix + ":" + memberId + ":" + period;
 
-        Long intakeId = 1L;
+        Long foodId = 1L;
         int score = 1;
 
-        Long intakeId2 = 2L;
+        Long foodId2 = 2L;
         int score2 = 11;
 
-        Long intakeId3 = 3L;
+        Long foodId3 = 3L;
         int score3 = 10;
 
-        redisTemplate.opsForZSet().add(key, String.valueOf(intakeId), score);
-        redisTemplate.opsForZSet().add(key, String.valueOf(intakeId2), score2);
-        redisTemplate.opsForZSet().add(key, String.valueOf(intakeId3), score3);
+        redisTemplate.opsForZSet().add(key, String.valueOf(foodId), score);
+        redisTemplate.opsForZSet().add(key, String.valueOf(foodId2), score2);
+        redisTemplate.opsForZSet().add(key, String.valueOf(foodId3), score3);
 
         // when
         Set<ZSetOperations.TypedTuple<String>> getRankSet = redisIntakeService.getRankRangeSet(memberId, period);
@@ -155,7 +152,7 @@ public class RedisIntakeServiceTest {
         assertThat(result.size()).isEqualTo(3);
 
         Map<String, Double> rank1 = result.stream().findFirst().get();
-        assertThat(rank1.get(String.valueOf(intakeId2))).isEqualTo(Double.valueOf(score2));
+        assertThat(rank1.get(String.valueOf(foodId2))).isEqualTo(Double.valueOf(score2));
 
         // reset
         init(memberId, period);

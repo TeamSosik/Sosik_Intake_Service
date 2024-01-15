@@ -17,16 +17,15 @@ public class RedisIntakeService {
     private long expiredTime = 60 * 10;// 10분
 
 
-    public Double getScore(Long memberId, Long intakeId, Integer period) {
+    public Double getScore(Long memberId, Long foodId, Integer period) {
 
         // key 불러오기
         String key = getKey(memberId, period);
 
-        // intakeId String으로 변경하기
-        String stringIntakeId = String.valueOf(intakeId);
+        String stringFoodId = String.valueOf(foodId);
 
         // redis에서 score 조회하기
-        Double value = redisTemplate.opsForZSet().score(key, stringIntakeId);
+        Double value = redisTemplate.opsForZSet().score(key, stringFoodId);
 
         return value;
     }
@@ -36,18 +35,16 @@ public class RedisIntakeService {
         return KEY_PREFIX + ":" + memberId + ":" + period;
     }
 
-    public void save(Long memberId, Long intakeId, int period, Integer value) {
+    public void save(Long memberId, Long foodId, int period, Integer value) {
 
         // key 생성하기
         String key = getKey(memberId, period);
 
         // sorted set에 저장하기
-        String stringIntakeId = String.valueOf(intakeId);
+        String stringFoodId = String.valueOf(foodId);
 
         redisTemplate.expire(key, expiredTime, TimeUnit.SECONDS);// 만료시간 정하기
-        redisTemplate.opsForZSet().add(key, stringIntakeId, value);
-
-        System.out.println(redisTemplate.getExpire(key));
+        redisTemplate.opsForZSet().add(key, stringFoodId, value);
     }
 
     public Set<ZSetOperations.TypedTuple<String>> getRankRangeSet(Long memberId, Integer period) {

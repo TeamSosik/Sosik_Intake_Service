@@ -19,6 +19,7 @@ import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -82,8 +83,8 @@ public class IntakeServiceImpl implements IntakeService{
         List<ResponseGetIntakeRank> result = null;
 
         // db 데이터 조회하기
-        LocalDate start = LocalDate.now();
-        LocalDate end = LocalDate.now().minusDays(period);
+        LocalDate start = LocalDate.now().minusDays(period);
+        LocalDate end = LocalDate.now();
         List<IntakeEntity> intakeList = intakeRepository.findByMemberIdAndCreatedAtBetween(memberId, start, end);
 
         if(intakeList.isEmpty()) {
@@ -92,31 +93,36 @@ public class IntakeServiceImpl implements IntakeService{
         // redis에 데이터 저장하기
         intakeList.stream()
                 .forEach((intake) -> {
-                    Double findScore = redisIntakeService.getScore(memberId, intake.getId(), period);
+                    Long foodId = intake.getFoodId();
+                    Double findScore = redisIntakeService.getScore(memberId, foodId, period);
                     // key에대한 member가 없으면 새롭게 member생성
                     if(Objects.isNull(findScore)) {
                         int value = 1;
-                        redisIntakeService.save(memberId, intake.getId(), period, value);
+                        redisIntakeService.save(memberId, foodId, period, value);
                         return;
                     }
                     // key에 대한 member가 있으면 1추가
-                    redisIntakeService.save(memberId, intake.getId(), period, findScore.intValue() + 1);
+                    redisIntakeService.save(memberId, foodId, period, findScore.intValue() + 1);
                 });
-
 
         // redis에서 rank 처리하기
         Set<ZSetOperations.TypedTuple<String>> rankRangeSet = redisIntakeService.getRankRangeSet(memberId, period);
 
         result = rankRangeSet.stream()
                     .map((data) -> {
-                        Long intakeId = Long.valueOf(data.getValue());
+                        Long foodId = Long.valueOf(data.getValue());
                         // redis에서 name 불러오기
-                        RedisFood redisFood = redisFoodRepository.findById(intakeId)
-                                .get();
+                        Optional<RedisFood> optionalRedisFood = redisFoodRepository.findById(foodId);
+
+                        // TODO : 음식 데이터가 캐시에 없을 경우 처리 로직 만들기
+                        if(optionalRedisFood.isEmpty()) {
+
+                        }
+                        RedisFood redisFood = optionalRedisFood.get();
                         String name = redisFood.getName();
 
                         return ResponseGetIntakeRank.builder()
-                                .intakeId(intakeId)
+                                .foodId(foodId)
                                 .name(name)
                                 .value(data.getScore())
                                 .build();
