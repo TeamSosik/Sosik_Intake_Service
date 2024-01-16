@@ -9,7 +9,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface IntakeService {
-    String createIntake(RequestIntake intakeDTO);
+    String createIntake(Long memberId, RequestIntake intakeDTO);
     List<ResponseGetIntake> getIntakes(Long memberId, LocalDate createdAt);
     String deleteIntake(Long intakeId);
 

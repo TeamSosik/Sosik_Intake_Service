@@ -7,9 +7,7 @@ import java.math.BigDecimal;
 
 @Builder
 public record RequestIntake(
-    Long memberId,
     Long foodId,
-    Long dayTargetCalorieId,
     BigDecimal calculationCarbo,
     BigDecimal calculationProtein,
     BigDecimal calculationFat,

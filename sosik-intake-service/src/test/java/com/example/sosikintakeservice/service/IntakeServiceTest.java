@@ -51,8 +51,9 @@ public class IntakeServiceTest {
     @Test
     void givenTestIntakeWhenCreateIntakeThenSuccess() {
         RequestIntake testIntakeDTO = testIntakeDTO();
+        Long memberId = 1L;
         given(intakeRepository.save(any())).willReturn(any());
-        assertThat(intakeService.createIntake(testIntakeDTO)).isEqualTo("ok");
+        assertThat(intakeService.createIntake(memberId, testIntakeDTO)).isEqualTo("ok");
     }
 
     @DisplayName("섭취 음식 생성시 정상적으로 계산되어 작동된다.")
@@ -65,11 +66,10 @@ public class IntakeServiceTest {
         BigDecimal calculationCarbo = new BigDecimal(foodInfo.carbo()).multiply(total.divide(new BigDecimal("100")));
         BigDecimal calculationProtein = new BigDecimal(foodInfo.protein()).multiply(total.divide(new BigDecimal("100")));
         BigDecimal calculationFat = new BigDecimal(foodInfo.fat()).multiply(total.divide(new BigDecimal("100")));
+        Long memberId = 1L;
 
         RequestIntake testIntakeDTO1 = RequestIntake.builder()
-                .memberId(1L)
                 .foodId(2L)
-                .dayTargetCalorieId(3L)
                 .calculationCarbo(calculationCarbo)
                 .calculationFat(calculationFat)
                 .calculationKcal(calculationKcal)
@@ -80,7 +80,7 @@ public class IntakeServiceTest {
         System.out.println(testIntakeDTO1);
 
         given(intakeRepository.save(any())).willReturn(any());
-        assertThat(intakeService.createIntake(testIntakeDTO1)).isEqualTo("ok");
+        assertThat(intakeService.createIntake(memberId, testIntakeDTO1)).isEqualTo("ok");
     }
 
     @DisplayName("섭취 음식 조회시 정상적으로 작동된다.")
@@ -107,9 +107,7 @@ public class IntakeServiceTest {
 
     private static RequestIntake testIntakeDTO() {
         return RequestIntake.builder()
-                .memberId(1L)
                 .foodId(2L)
-                .dayTargetCalorieId(3L)
                 .calculationCarbo(new BigDecimal("50.5"))
                 .calculationFat(new BigDecimal("20.0"))
                 .calculationKcal(new BigDecimal("400.0"))

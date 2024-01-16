@@ -31,11 +31,10 @@ public class IntakeServiceImpl implements IntakeService{
     private final RedisIntakeService redisIntakeService;
     private final RedisFoodRepository redisFoodRepository;
 
-    public String createIntake(RequestIntake intakeDTO) {
+    public String createIntake(Long memberId, RequestIntake intakeDTO) {
         IntakeEntity intake = IntakeEntity.builder()
-                .memberId(intakeDTO.memberId())
+                .memberId(memberId)
                 .foodId(intakeDTO.foodId())
-                .dayTargetCalorieId(intakeDTO.dayTargetCalorieId())
                 .calculationCarbo(intakeDTO.calculationCarbo())
                 .calculationProtein(intakeDTO.calculationProtein())
                 .calculationFat(intakeDTO.calculationFat())
@@ -66,7 +65,6 @@ public class IntakeServiceImpl implements IntakeService{
                                 .memberId(intakeEntity.getMemberId())
                                 .foodId(intakeEntity.getFoodId())
                                 .name(redisFood.getName())
-                                .dayTargetCalorieId(intakeEntity.getDayTargetCalorieId())
                                 .calculationCarbo(intakeEntity.getCalculationCarbo())
                                 .calculationProtein(intakeEntity.getCalculationProtein())
                                 .calculationFat(intakeEntity.getCalculationFat())
