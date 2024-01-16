@@ -17,21 +17,21 @@ spring:
   datasource:
 
     # h2
-    driver-class-name: org.h2.Driver
-    url: jdbc:h2:mem:testdb
-    username: sa
+    # driver-class-name: org.h2.Driver
+    # url: jdbc:h2:mem:testdb
+    # username: sa
 
     # mysql
-#    driver-class-name: com.mysql.cj.jdbc.Driver
-#    url: jdbc:mysql://localhost:10000/sosik?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul
-#    username: test1
-#    password: ${mysql_password}
+   driver-class-name: com.mysql.cj.jdbc.Driver
+   url: jdbc:mysql://localhost:10000/sosik?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul
+   username: test1
+   password: ${mysql_password}
 
   data:
     redis:
       host: localhost
       port: 6379
-      password:
+      password: redis
 
   jpa:
     show-sql: true
