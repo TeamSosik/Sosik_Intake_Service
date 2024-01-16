@@ -16,14 +16,14 @@ import java.util.List;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping("/intake")
+@RequestMapping("/intake/v1")
 public class IntakeController {
 
     private final IntakeService intakeService;
 
     @PostMapping("/food")
-    public Result<Void> createIntake(@RequestBody RequestIntake intake) {
-        intakeService.createIntake(intake);
+    public Result<Void> createIntake(@RequestHeader Long memberId, @RequestBody RequestIntake intake) {
+        intakeService.createIntake(memberId, intake);
         return Result.success();
     }
 
@@ -39,7 +39,7 @@ public class IntakeController {
         return Result.success();
     }
 
-    @GetMapping("/v1/rank")
+    @GetMapping("/rank")
     public Result<List<ResponseGetIntakeRank>> getRankList(@RequestHeader Long memberId,
                                  @RequestParam(defaultValue = "30") int period) {
 

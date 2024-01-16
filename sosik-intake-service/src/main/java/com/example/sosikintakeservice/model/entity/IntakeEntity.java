@@ -23,9 +23,6 @@ public class IntakeEntity extends AuditingFields{
     @Column(nullable = false)
     private Long foodId;
 
-    @Column(nullable = false)
-    private Long dayTargetCalorieId;
-
     private BigDecimal calculationCarbo;
     private BigDecimal calculationProtein;
     private BigDecimal calculationFat;
@@ -53,7 +50,6 @@ public class IntakeEntity extends AuditingFields{
         this.id = id;
         this.memberId = memberId;
         this.foodId = foodId;
-        this.dayTargetCalorieId = dayTargetCalorieId;
         this.calculationCarbo = calculationCarbo;
         this.calculationProtein = calculationProtein;
         this.calculationFat = calculationFat;
