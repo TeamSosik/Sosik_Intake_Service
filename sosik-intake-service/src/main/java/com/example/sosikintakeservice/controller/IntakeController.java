@@ -3,6 +3,7 @@ package com.example.sosikintakeservice.controller;
 import com.example.sosikintakeservice.dto.request.RequestGetIntake;
 import com.example.sosikintakeservice.dto.request.RequestIntake;
 import com.example.sosikintakeservice.dto.response.ResponseGetIntake;
+import com.example.sosikintakeservice.dto.response.ResponseGetIntakeRank;
 import com.example.sosikintakeservice.dto.response.Result;
 import com.example.sosikintakeservice.service.IntakeService;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +37,15 @@ public class IntakeController {
     public Result<Void> deleteIntake(@PathVariable final Long intakeId) {
         intakeService.deleteIntake(intakeId);
         return Result.success();
+    }
+
+    @GetMapping("/v1/rank")
+    public Result<List<ResponseGetIntakeRank>> getRankList(@RequestHeader Long memberId,
+                                 @RequestParam(defaultValue = "30") int period) {
+
+        List<ResponseGetIntakeRank> body = intakeService.getRankList(memberId, period);
+
+        return Result.success(body);
     }
 
 }
