@@ -1,11 +1,8 @@
 package com.example.sosikintakeservice.service;
 
-import com.example.sosikintakeservice.dto.request.RequestGetIntake;
 import com.example.sosikintakeservice.dto.request.RequestIntake;
 import com.example.sosikintakeservice.dto.response.ResponseGetIntake;
 import com.example.sosikintakeservice.dto.response.ResponseGetIntakeRank;
-import com.example.sosikintakeservice.dto.response.redis.RedisFood;
-import com.example.sosikintakeservice.dto.response.redis.RedisFoodRepository;
 import com.example.sosikintakeservice.exception.ApplicationException;
 import com.example.sosikintakeservice.exception.ErrorCode;
 import com.example.sosikintakeservice.model.entity.IntakeEntity;
@@ -19,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.Collections;
-import java.time.LocalDateTime;
 
 import java.util.List;
 import java.util.Objects;
