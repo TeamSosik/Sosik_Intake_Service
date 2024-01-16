@@ -1,15 +1,17 @@
 package com.example.sosikintakeservice.service;
 
 import com.example.sosikintakeservice.dto.request.RequestTargetCalorie;
-import com.example.sosikintakeservice.dto.request.UpdateTargetCalorie;
+import com.example.sosikintakeservice.dto.request.RequestUpdateTargetCalorie;
 import com.example.sosikintakeservice.dto.response.ResponseGetDayTargetCalorie;
 import com.example.sosikintakeservice.exception.ApplicationException;
 import com.example.sosikintakeservice.exception.ErrorCode;
 import com.example.sosikintakeservice.model.entity.DayTargetCalorieEntity;
 import com.example.sosikintakeservice.repository.TargetCalorieRepository;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -17,6 +19,7 @@ import java.time.format.DateTimeFormatter;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional
 public class DayTargetCalorieServiceImpl implements DayTargetCalorieService {
     private final TargetCalorieRepository targetCalorieRepository;
 
@@ -39,15 +42,16 @@ public class DayTargetCalorieServiceImpl implements DayTargetCalorieService {
     }
 
     @Override
-    public String updateDayTargetCalorie(UpdateTargetCalorie updateTargetCalorie) {
-        DayTargetCalorieEntity dayTargetCalorieEntity = targetCalorieRepository.findById(updateTargetCalorie.Id()).orElseThrow(() -> {
+    public void updateDayTargetCalorie(Long memberId, RequestUpdateTargetCalorie requestUpdateTargetCalorie) {
+        DayTargetCalorieEntity dayTargetCalorieEntity = targetCalorieRepository
+                .findByMemberIdAndCreatedAt(memberId, requestUpdateTargetCalorie.createdAt()).orElseThrow(() -> {
             return new ApplicationException(ErrorCode.TARGETCALORIE_NOT_FOUND);
         });
-        dayTargetCalorieEntity.updateTargetCalorie(updateTargetCalorie);
-        return "ok";
+        dayTargetCalorieEntity.updateTargetCalorie(requestUpdateTargetCalorie);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ResponseGetDayTargetCalorie getDayTargetCalorie(Long memberId, String today) {
         DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate localDate = LocalDate.parse(today, inputFormatter);

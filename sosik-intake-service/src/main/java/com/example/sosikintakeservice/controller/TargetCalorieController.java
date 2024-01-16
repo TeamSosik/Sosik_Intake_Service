@@ -2,7 +2,7 @@ package com.example.sosikintakeservice.controller;
 
 
 import com.example.sosikintakeservice.dto.request.RequestTargetCalorie;
-import com.example.sosikintakeservice.dto.request.UpdateTargetCalorie;
+import com.example.sosikintakeservice.dto.request.RequestUpdateTargetCalorie;
 import com.example.sosikintakeservice.dto.response.ResponseGetDayTargetCalorie;
 import com.example.sosikintakeservice.dto.response.Result;
 import com.example.sosikintakeservice.service.DayTargetCalorieService;
@@ -19,14 +19,16 @@ public class TargetCalorieController {
     private final DayTargetCalorieService dayTargetCalorieService;
 
     @PostMapping("/v1/")
-    public Result<Void> createTargetCalorie(@RequestHeader Long memberId, @RequestBody @Valid final RequestTargetCalorie requestTargetCalorie) {
+    public Result<Void> createTargetCalorie(@RequestHeader Long memberId,
+                                            @RequestBody @Valid final RequestTargetCalorie requestTargetCalorie) {
         dayTargetCalorieService.createTargetCalorie(memberId,requestTargetCalorie);
         return Result.success();
     }
 
-    @PatchMapping("")
-    public Result<Void> updateTargetCalorie(@RequestBody @Valid final UpdateTargetCalorie updateTargetCalorie) {
-        dayTargetCalorieService.updateDayTargetCalorie(updateTargetCalorie);
+    @PatchMapping("/v1/")
+    public Result<Void> updateTargetCalorie(@RequestHeader Long memberId ,
+                                            @RequestBody @Valid final RequestUpdateTargetCalorie requestUpdateTargetCalorie) {
+        dayTargetCalorieService.updateDayTargetCalorie(memberId, requestUpdateTargetCalorie);
         return Result.success();
     }
 

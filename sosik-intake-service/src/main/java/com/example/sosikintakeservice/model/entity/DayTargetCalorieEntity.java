@@ -1,6 +1,6 @@
 package com.example.sosikintakeservice.model.entity;
 
-import com.example.sosikintakeservice.dto.request.UpdateTargetCalorie;
+import com.example.sosikintakeservice.dto.request.RequestUpdateTargetCalorie;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -31,7 +31,7 @@ public class DayTargetCalorieEntity extends AuditingFields{
         this.dayTargetKcal = dayTargetKcal;
     }
 
-    public void updateTargetCalorie(UpdateTargetCalorie updateTargetCalorie) {
-        this.dayTargetKcal = updateTargetCalorie.dayTargetKcal();
+    public void updateTargetCalorie(RequestUpdateTargetCalorie requestUpdateTargetCalorie) {
+        this.dayTargetKcal = requestUpdateTargetCalorie.dayTargetKcal();
     }
 }
