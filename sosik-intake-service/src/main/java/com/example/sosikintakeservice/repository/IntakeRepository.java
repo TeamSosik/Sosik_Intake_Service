@@ -14,5 +14,5 @@ public interface IntakeRepository extends JpaRepository<IntakeEntity, Long> {
 
     List<IntakeEntity> findByMemberIdAndCreatedAt(Long memberId, LocalDate localDate);
 
-    List<IntakeEntity> findByMemberIdAndCreatedAtBetween(Long memberId, LocalDate start2, LocalDate end);
+    List<IntakeEntity> findByMemberIdAndCreatedAtBetween(Long memberId, LocalDate start, LocalDate end);
 }
