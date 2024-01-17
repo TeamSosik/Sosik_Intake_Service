@@ -119,6 +119,7 @@ public class IntakeServiceTest {
 
     private static ResponseGetIntake testgetIntakeDTO() {
         return ResponseGetIntake.builder()
+                .id(1L)
                 .memberId(1L)
                 .foodId(2L)
                 .dayTargetCalorieId(3L)
