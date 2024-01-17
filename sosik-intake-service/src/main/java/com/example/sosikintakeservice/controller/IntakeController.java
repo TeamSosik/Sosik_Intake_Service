@@ -2,9 +2,11 @@ package com.example.sosikintakeservice.controller;
 
 import com.example.sosikintakeservice.dto.request.RequestGetIntake;
 import com.example.sosikintakeservice.dto.request.RequestIntake;
+import com.example.sosikintakeservice.dto.response.ResponseGetCreateAt;
 import com.example.sosikintakeservice.dto.response.ResponseGetIntake;
 import com.example.sosikintakeservice.dto.response.ResponseGetIntakeRank;
 import com.example.sosikintakeservice.dto.response.Result;
+import com.example.sosikintakeservice.model.entity.Category;
 import com.example.sosikintakeservice.service.IntakeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +33,12 @@ public class IntakeController {
     public Result<List<ResponseGetIntake>> getIntakes(@RequestHeader Long memberId, @PathVariable final LocalDate createdAt) {
         List<ResponseGetIntake> responseGetIntakes = intakeService.getIntakes(memberId,createdAt);
         return Result.success(responseGetIntakes);
+    }
+
+    @GetMapping("/check")
+    public Result<List<ResponseGetCreateAt>> getIntakes(@RequestHeader Long memberId) {
+        List<ResponseGetCreateAt> responseGetCreateAts = intakeService.getCreatedAtList(memberId);
+        return Result.success(responseGetCreateAts);
     }
 
     @DeleteMapping("/{intakeId}")

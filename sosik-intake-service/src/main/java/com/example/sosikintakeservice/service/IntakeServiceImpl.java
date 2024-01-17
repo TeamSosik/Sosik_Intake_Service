@@ -1,13 +1,15 @@
 package com.example.sosikintakeservice.service;
 
 import com.example.sosikintakeservice.dto.request.RequestIntake;
+import com.example.sosikintakeservice.dto.response.ResponseGetCreateAt;
 import com.example.sosikintakeservice.dto.response.ResponseGetIntake;
 import com.example.sosikintakeservice.dto.response.ResponseGetIntakeRank;
-import com.example.sosikintakeservice.exception.ApplicationException;
-import com.example.sosikintakeservice.exception.ErrorCode;
-import com.example.sosikintakeservice.model.entity.IntakeEntity;
 import com.example.sosikintakeservice.redis.RedisFood;
 import com.example.sosikintakeservice.redis.RedisFoodRepository;
+import com.example.sosikintakeservice.exception.ApplicationException;
+import com.example.sosikintakeservice.exception.ErrorCode;
+import com.example.sosikintakeservice.model.entity.Category;
+import com.example.sosikintakeservice.model.entity.IntakeEntity;
 import com.example.sosikintakeservice.repository.IntakeRepository;
 import com.example.sosikintakeservice.service.redis.RedisIntakeService;
 import lombok.RequiredArgsConstructor;
@@ -43,13 +45,11 @@ public class IntakeServiceImpl implements IntakeService{
                 .category(intakeDTO.category())
                 .build();
         intakeRepository.save(intake);
-
         return "ok";
     }
 
     public List<ResponseGetIntake> getIntakes(Long memberId, LocalDate createdAt) {
         List<IntakeEntity> intakeEntities = intakeRepository.findByMemberIdAndCreatedAt(memberId,createdAt);
-        System.out.println(intakeEntities);
         return intakeEntities.stream()
                 .map(intakeEntity -> {
                     Optional<RedisFood> optionalRedisFood = redisFoodRepository.findById(intakeEntity.getFoodId());
@@ -57,9 +57,6 @@ public class IntakeServiceImpl implements IntakeService{
                         RedisFood redisFood = optionalRedisFood.get();
 
                         String name = redisFood.getName();
-                        System.out.println("==========================");
-                        System.out.println(name);
-                        System.out.println(optionalRedisFood);
 
                         return ResponseGetIntake.builder()
                                 .memberId(intakeEntity.getMemberId())
@@ -76,6 +73,14 @@ public class IntakeServiceImpl implements IntakeService{
                         return null;
                     }
                 })
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ResponseGetCreateAt> getCreatedAtList(Long memberId) {
+        List<IntakeEntity> intakeEntities = intakeRepository.findByMemberId(memberId);
+        return intakeEntities.stream()
+                .map(entity -> new ResponseGetCreateAt(entity.getCategory(),entity.getCreatedAt()))
                 .collect(Collectors.toList());
     }
 
