@@ -1,6 +1,7 @@
 package com.example.sosikintakeservice.service;
 
 import com.example.sosikintakeservice.dto.request.RequestIntake;
+import com.example.sosikintakeservice.dto.response.ResponseGetCreateAt;
 import com.example.sosikintakeservice.dto.response.ResponseGetIntake;
 import com.example.sosikintakeservice.dto.response.ResponseGetIntakeRank;
 import com.example.sosikintakeservice.exception.ApplicationException;
@@ -76,6 +77,14 @@ public class IntakeServiceImpl implements IntakeService{
                         return null;
                     }
                 })
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ResponseGetCreateAt> getCreatedAtList(Long memberId) {
+        List<IntakeEntity> intakeEntities = intakeRepository.findByMemberId(memberId);
+        return intakeEntities.stream()
+                .map(entity -> new ResponseGetCreateAt(entity.getCategory(),entity.getCreatedAt()))
                 .collect(Collectors.toList());
     }
 

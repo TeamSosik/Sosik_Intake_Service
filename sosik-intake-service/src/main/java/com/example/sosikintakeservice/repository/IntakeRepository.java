@@ -13,6 +13,6 @@ import java.util.Optional;
 public interface IntakeRepository extends JpaRepository<IntakeEntity, Long> {
 
     List<IntakeEntity> findByMemberIdAndCreatedAt(Long memberId, LocalDate localDate);
-
+    List<IntakeEntity> findByMemberId(Long memberId);
     List<IntakeEntity> findByMemberIdAndCreatedAtBetween(Long memberId, LocalDate start, LocalDate end);
 }
