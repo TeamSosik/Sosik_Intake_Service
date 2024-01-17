@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 
 @Builder
 public record ResponseGetIntake(
+        Long id,
         Long memberId,
         Long foodId,
         String name,

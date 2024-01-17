@@ -63,6 +63,7 @@ public class IntakeServiceImpl implements IntakeService{
                         System.out.println(optionalRedisFood);
 
                         return ResponseGetIntake.builder()
+                                .id(intakeEntity.getId())
                                 .memberId(intakeEntity.getMemberId())
                                 .foodId(intakeEntity.getFoodId())
                                 .name(redisFood.getName())
