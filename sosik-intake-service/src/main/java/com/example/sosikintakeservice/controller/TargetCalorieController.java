@@ -35,7 +35,6 @@ public class TargetCalorieController {
     @GetMapping("/v1/{today}")
     public Result<ResponseGetDayTargetCalorie> getTargetCalorie(@RequestHeader Long memberId, @PathVariable String today) {
         ResponseGetDayTargetCalorie dayTargetCalorie = dayTargetCalorieService.getDayTargetCalorie(memberId,today);
-        System.out.println(today);
         if(dayTargetCalorie==null){
             return Result.success(null);
         }

@@ -1,6 +1,5 @@
 package com.example.sosikintakeservice.model.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -38,7 +37,6 @@ public class IntakeEntity extends AuditingFields{
             final Long id,
             final Long memberId,
             final Long foodId,
-            final Long dayTargetCalorieId,
             final BigDecimal calculationCarbo,
             final BigDecimal calculationProtein,
             final BigDecimal calculationFat,

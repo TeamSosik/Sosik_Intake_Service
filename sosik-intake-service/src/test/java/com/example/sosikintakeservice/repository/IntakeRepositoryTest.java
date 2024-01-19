@@ -56,20 +56,17 @@ public class IntakeRepositoryTest {
         // given
         IntakeEntity intake1 = IntakeEntity.builder()
                 .memberId(1L)
-                .dayTargetCalorieId(1L)
                 .foodId(1L)
                 .category(Category.BREAKFAST)
                 .build();
         IntakeEntity intake2 = IntakeEntity.builder()
                 .memberId(1L)
-                .dayTargetCalorieId(1L)
                 .foodId(1L)
                 .category(Category.BREAKFAST)
                 .build();
         IntakeEntity intake3 = IntakeEntity.builder()
                 .memberId(1L)
                 .foodId(1L)
-                .dayTargetCalorieId(1L)
                 .category(Category.BREAKFAST)
                 .build();
 

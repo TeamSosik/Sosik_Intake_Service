@@ -7,12 +7,10 @@ import com.example.sosikintakeservice.exception.ApplicationException;
 import com.example.sosikintakeservice.exception.ErrorCode;
 import com.example.sosikintakeservice.model.entity.DayTargetCalorieEntity;
 import com.example.sosikintakeservice.repository.TargetCalorieRepository;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -55,7 +53,6 @@ public class DayTargetCalorieServiceImpl implements DayTargetCalorieService {
     public ResponseGetDayTargetCalorie getDayTargetCalorie(Long memberId, String today) {
         DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate localDate = LocalDate.parse(today, inputFormatter);
-
         DayTargetCalorieEntity dayTargetCalorieEntity = targetCalorieRepository
                 .findByMemberIdAndCreatedAt(memberId, localDate).orElse(null);
         System.out.println(localDate);

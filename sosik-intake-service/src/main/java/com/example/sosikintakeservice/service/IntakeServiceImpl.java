@@ -14,10 +14,8 @@ import com.example.sosikintakeservice.service.redis.RedisIntakeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDate;
 import java.util.Collections;
-
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -27,7 +25,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Service
 public class IntakeServiceImpl implements IntakeService{
-
     private final IntakeRepository intakeRepository;
     private final RedisIntakeService redisIntakeService;
     private final RedisFoodRepository redisFoodRepository;

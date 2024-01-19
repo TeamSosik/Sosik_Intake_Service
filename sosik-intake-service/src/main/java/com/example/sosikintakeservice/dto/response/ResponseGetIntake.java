@@ -1,11 +1,7 @@
 package com.example.sosikintakeservice.dto.response;
 
 import com.example.sosikintakeservice.model.entity.Category;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 import java.math.BigDecimal;
 
 @Builder

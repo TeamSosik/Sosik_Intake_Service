@@ -22,12 +22,10 @@ public class AuditingFields {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     @CreatedDate
     @Setter
-//    @Column(nullable = false, updatable = false)
-    private LocalDate createdAt; // 생성일시
+    private LocalDate createdAt;
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     @LastModifiedDate
-//    @Column(nullable = false)
-    private LocalDateTime modifiedAt; //수정일시
+    private LocalDateTime modifiedAt;
 
 }
