@@ -14,10 +14,10 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
 @RedisHash(
-        value = "redisFood",
+        value = "cacheFood",
         timeToLive = 60 * 30 // 30분
 )
-public class RedisFood {
+public class CacheFood {
 
     @Id
     private Long foodId;
@@ -34,7 +34,7 @@ public class RedisFood {
     private LocalDateTime modifiedAt; //수정일시
 
     @Builder
-    public RedisFood(
+    public CacheFood(
             Long foodId,
             String name,
             BigDecimal carbo,
