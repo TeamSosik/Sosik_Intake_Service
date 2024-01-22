@@ -7,7 +7,7 @@ import com.example.sosikintakeservice.dto.response.ResponseGetIntakeRank;
 import com.example.sosikintakeservice.exception.ApplicationException;
 import com.example.sosikintakeservice.model.entity.Category;
 import com.example.sosikintakeservice.model.entity.IntakeEntity;
-import com.example.sosikintakeservice.redis.RedisFood;
+import com.example.sosikintakeservice.redis.CacheFood;
 import com.example.sosikintakeservice.redis.RedisFoodRepository;
 import com.example.sosikintakeservice.repository.IntakeRepository;
 import com.example.sosikintakeservice.service.redis.RedisIntakeService;
@@ -201,21 +201,21 @@ public class IntakeServiceTest {
                 .when(redisIntakeService)
                 .getRankRangeSet(memberId, period);
         Mockito.doReturn(
-                        Optional.of(RedisFood.builder()
+                        Optional.of(CacheFood.builder()
                                 .name("food1")
                                 .build())
                 )
                 .when(redisFoodRepository)
                 .findById(foodId1);
         Mockito.doReturn(
-                        Optional.of(RedisFood.builder()
+                        Optional.of(CacheFood.builder()
                                 .name("food2")
                                 .build())
                 )
                 .when(redisFoodRepository)
                 .findById(foodId2);
         Mockito.doReturn(
-                        Optional.of(RedisFood.builder()
+                        Optional.of(CacheFood.builder()
                                 .name("food3")
                                 .build())
                 )
@@ -280,21 +280,21 @@ public class IntakeServiceTest {
                 .when(redisIntakeService)
                 .getRankRangeSet(memberId, period);
         Mockito.doReturn(
-                        Optional.of(RedisFood.builder()
+                        Optional.of(CacheFood.builder()
                                 .name("food1")
                                 .build())
                 )
                 .when(redisFoodRepository)
                 .findById(foodId1);
         Mockito.doReturn(
-                        Optional.of(RedisFood.builder()
+                        Optional.of(CacheFood.builder()
                                 .name("food2")
                                 .build())
                 )
                 .when(redisFoodRepository)
                 .findById(foodId2);
         Mockito.doReturn(
-                        Optional.of(RedisFood.builder()
+                        Optional.of(CacheFood.builder()
                                 .name("food3")
                                 .build())
                 )

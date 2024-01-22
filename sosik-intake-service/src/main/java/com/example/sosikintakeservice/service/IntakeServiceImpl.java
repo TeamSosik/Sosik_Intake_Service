@@ -7,13 +7,14 @@ import com.example.sosikintakeservice.dto.response.ResponseGetIntakeRank;
 import com.example.sosikintakeservice.exception.ApplicationException;
 import com.example.sosikintakeservice.exception.ErrorCode;
 import com.example.sosikintakeservice.model.entity.IntakeEntity;
-import com.example.sosikintakeservice.redis.RedisFood;
+import com.example.sosikintakeservice.redis.CacheFood;
 import com.example.sosikintakeservice.redis.RedisFoodRepository;
 import com.example.sosikintakeservice.repository.IntakeRepository;
 import com.example.sosikintakeservice.service.redis.RedisIntakeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
+
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
@@ -50,9 +51,9 @@ public class IntakeServiceImpl implements IntakeService{
         System.out.println(intakeEntities);
         return intakeEntities.stream()
                 .map(intakeEntity -> {
-                    Optional<RedisFood> optionalRedisFood = redisFoodRepository.findById(intakeEntity.getFoodId());
+                    Optional<CacheFood> optionalRedisFood = redisFoodRepository.findById(intakeEntity.getFoodId());
                     if (optionalRedisFood.isPresent()) {
-                        RedisFood redisFood = optionalRedisFood.get();
+                        CacheFood redisFood = optionalRedisFood.get();
 
                         String name = redisFood.getName();
                         System.out.println("==========================");
@@ -132,13 +133,13 @@ public class IntakeServiceImpl implements IntakeService{
                     .map((data) -> {
                         Long foodId = Long.valueOf(data.getValue());
                         // redis에서 name 불러오기
-                        Optional<RedisFood> optionalRedisFood = redisFoodRepository.findById(foodId);
+                        Optional<CacheFood> optionalRedisFood = redisFoodRepository.findById(foodId);
 
                         // TODO : 음식 데이터가 캐시에 없을 경우 처리 로직 만들기
                         if(optionalRedisFood.isEmpty()) {
 
                         }
-                        RedisFood redisFood = optionalRedisFood.get();
+                        CacheFood redisFood = optionalRedisFood.get();
                         String name = redisFood.getName();
 
                         return ResponseGetIntakeRank.builder()
