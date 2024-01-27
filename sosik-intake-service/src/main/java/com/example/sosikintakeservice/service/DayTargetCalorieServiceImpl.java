@@ -28,7 +28,6 @@ public class DayTargetCalorieServiceImpl implements DayTargetCalorieService {
                 .findByMemberIdAndCreatedAt(memberId,currentTime).orElse(null);
         if (entity != null) {  //오늘 기록했다면
             throw new ApplicationException(ErrorCode.EXISTENCE_TARGETCALORIE_ERROR);
-           
         } else { //오늘 기록 안했다면
             DayTargetCalorieEntity dayTargetCalorieEntity = DayTargetCalorieEntity.builder()
                     .memberId(memberId)
@@ -55,8 +54,6 @@ public class DayTargetCalorieServiceImpl implements DayTargetCalorieService {
         LocalDate localDate = LocalDate.parse(today, inputFormatter);
         DayTargetCalorieEntity dayTargetCalorieEntity = targetCalorieRepository
                 .findByMemberIdAndCreatedAt(memberId, localDate).orElse(null);
-        System.out.println(localDate);
-        System.out.println(dayTargetCalorieEntity);
         if (dayTargetCalorieEntity==null){
             ResponseGetDayTargetCalorie responseGetDayTargetCalorie = null;
             return responseGetDayTargetCalorie;
