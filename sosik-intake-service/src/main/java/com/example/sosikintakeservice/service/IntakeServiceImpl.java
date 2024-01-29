@@ -55,7 +55,6 @@ public class IntakeServiceImpl implements IntakeService{
 
     public List<ResponseGetIntake> getIntakes(Long memberId, LocalDate createdAt) {
         List<IntakeEntity> intakeEntities = intakeRepository.findByMemberIdAndCreatedAt(memberId,createdAt);
-        System.out.println(intakeEntities);
         return intakeEntities.stream()
                 .map(intakeEntity -> {
                     Optional<CacheFood> optionalRedisFood = redisFoodRepository.findById(intakeEntity.getFoodId());
@@ -63,10 +62,6 @@ public class IntakeServiceImpl implements IntakeService{
                         CacheFood redisFood = optionalRedisFood.get();
 
                         String name = redisFood.getName();
-                        System.out.println("==========================");
-                        System.out.println(name);
-                        System.out.println(optionalRedisFood);
-
                         return ResponseGetIntake.builder()
                                 .id(intakeEntity.getId())
                                 .memberId(intakeEntity.getMemberId())
@@ -107,7 +102,6 @@ public class IntakeServiceImpl implements IntakeService{
 
         List<ResponseGetIntakeRank> result = null;
 
-        // db 데이터 조회하기
         LocalDate start = LocalDate.now().minusDays(period);
         LocalDate end = LocalDate.now();
         List<IntakeEntity> intakeList = intakeRepository.findByMemberIdAndCreatedAtBetween(memberId, start, end);
@@ -115,6 +109,7 @@ public class IntakeServiceImpl implements IntakeService{
         if(intakeList.isEmpty()) {
             return Collections.emptyList();
         }
+      
         // redis에 기존 데이터 있으면 삭제하기
         redisIntakeService.delete(intakeRankCondition.rankType(), memberId, period);
 
