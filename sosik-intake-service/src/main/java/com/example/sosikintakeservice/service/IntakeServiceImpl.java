@@ -1,9 +1,13 @@
 package com.example.sosikintakeservice.service;
 
+import com.example.sosikintakeservice.api.FoodServiceApi;
+import com.example.sosikintakeservice.dto.IntakeRankCondition;
+import com.example.sosikintakeservice.dto.api.ResponseGetFood;
 import com.example.sosikintakeservice.dto.request.RequestIntake;
 import com.example.sosikintakeservice.dto.response.ResponseGetCreateAt;
 import com.example.sosikintakeservice.dto.response.ResponseGetIntake;
 import com.example.sosikintakeservice.dto.response.ResponseGetIntakeRank;
+import com.example.sosikintakeservice.dto.response.Result;
 import com.example.sosikintakeservice.exception.ApplicationException;
 import com.example.sosikintakeservice.exception.ErrorCode;
 import com.example.sosikintakeservice.model.entity.IntakeEntity;
@@ -14,7 +18,9 @@ import com.example.sosikintakeservice.service.redis.RedisIntakeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
@@ -29,6 +35,7 @@ public class IntakeServiceImpl implements IntakeService{
     private final IntakeRepository intakeRepository;
     private final RedisIntakeService redisIntakeService;
     private final RedisFoodRepository redisFoodRepository;
+    private final FoodServiceApi foodServiceApi;
 
     public String createIntake(Long memberId, RequestIntake intakeDTO) {
         IntakeEntity intake = IntakeEntity.builder()
@@ -96,7 +103,7 @@ public class IntakeServiceImpl implements IntakeService{
     }
 
     @Override
-    public List<ResponseGetIntakeRank> getRankList(Long memberId, int period) {
+    public List<ResponseGetIntakeRank> getRankList(IntakeRankCondition intakeRankCondition, Long memberId, int period) {
 
         List<ResponseGetIntakeRank> result = null;
 
@@ -109,48 +116,106 @@ public class IntakeServiceImpl implements IntakeService{
             return Collections.emptyList();
         }
         // redis에 기존 데이터 있으면 삭제하기
-        redisIntakeService.delete(memberId, period);
+        redisIntakeService.delete(intakeRankCondition.rankType(), memberId, period);
 
         // redis에 데이터 저장하기
-        intakeList.stream()
-                .forEach((intake) -> {
-                    Long foodId = intake.getFoodId();
-                    Double findScore = redisIntakeService.getScore(memberId, foodId, period);
-                    // key에대한 member가 없으면 새롭게 member생성
-                    if(Objects.isNull(findScore)) {
-                        int value = 1;
-                        redisIntakeService.save(memberId, foodId, period, value);
-                        return;
-                    }
-                    // key에 대한 member가 있으면 1추가
-                    redisIntakeService.save(memberId, foodId, period, findScore.intValue() + 1);
-                });
+        saveCache(intakeRankCondition, memberId, period, intakeList);
 
-        // redis에서 rank 처리하기
-        Set<ZSetOperations.TypedTuple<String>> rankRangeSet = redisIntakeService.getRankRangeSet(memberId, period);
+        // redis에서 rank 불러오기
+        Set<ZSetOperations.TypedTuple<String>> rankRangeSet =
+                redisIntakeService.getRankRangeSet(intakeRankCondition.rankType() , memberId, period);
 
         result = rankRangeSet.stream()
                     .map((data) -> {
                         Long foodId = Long.valueOf(data.getValue());
                         // redis에서 name 불러오기
-                        Optional<CacheFood> optionalRedisFood = redisFoodRepository.findById(foodId);
-
-                        // TODO : 음식 데이터가 캐시에 없을 경우 처리 로직 만들기
-                        if(optionalRedisFood.isEmpty()) {
-
-                        }
-                        CacheFood redisFood = optionalRedisFood.get();
-                        String name = redisFood.getName();
+                        String name = "";
+                        name = getFoodName(foodId, name);
 
                         return ResponseGetIntakeRank.builder()
                                 .foodId(foodId)
                                 .name(name)
                                 .value(data.getScore())
                                 .build();
+
                     })
                     .collect(Collectors.toList());
 
         return result;
 
+    }
+
+    private String getFoodName(Long foodId, String name) {
+        Optional<CacheFood> optionalRedisFood = redisFoodRepository.findById(foodId);
+
+        if(!optionalRedisFood.isEmpty()) {
+            CacheFood redisFood = optionalRedisFood.get();
+            name = redisFood.getName();
+        }
+
+        // 음식 데이터가 캐시에 없을 경우 처리 로직 만들기
+        if(optionalRedisFood.isEmpty()) {
+            // 음식 DB요청하기
+            // TODO : 조회했을 때 데이터가 없으면 어떻게 처리할 지 생각해보기
+            Result<ResponseGetFood> resultResponseGetFood = null;
+            try {
+                resultResponseGetFood = foodServiceApi.getFood(foodId);
+
+                if(Objects.isNull(resultResponseGetFood.getResult())) {
+                    throw new ApplicationException(ErrorCode.INTERNAL_SERVER_ERROR);
+                }
+
+                name = resultResponseGetFood.getResult().getName();
+
+                // redis에 저장하기
+                CacheFood cacheFood = CacheFood.create(resultResponseGetFood.getResult());
+                redisFoodRepository.save(cacheFood);
+            // connection 에러 처리
+            } catch (RestClientException e) {
+                throw new ApplicationException(ErrorCode.INTERNAL_SERVER_ERROR);
+            }
+        }
+        return name;
+    }
+
+    private void saveCache(IntakeRankCondition intakeRankCondition, Long memberId, int period, List<IntakeEntity> intakeList) {
+
+        if("food".equalsIgnoreCase(intakeRankCondition.rankType())) {
+            intakeList.stream()
+                    .forEach((intake) -> {
+                        Long foodId = intake.getFoodId();
+                        Double findScore = redisIntakeService.getScore(intakeRankCondition.rankType(), memberId, foodId, period);
+                        // key에대한 member가 없으면 새롭게 member생성
+                        if (Objects.isNull(findScore)) {
+                            int value = 1;
+                            Double doubleValue = Double.valueOf(value);
+                            redisIntakeService.save(intakeRankCondition.rankType(), memberId, foodId, period, doubleValue);
+                            return;
+                        }
+                        // key에 대한 member가 있으면 1추가
+                        Double doubleValue = Double.valueOf(findScore.intValue() + 1);
+                        redisIntakeService.save(intakeRankCondition.rankType(), memberId, foodId, period, doubleValue);
+                    });
+            return;
+        }
+        if("kcal".equalsIgnoreCase(intakeRankCondition.rankType())) {
+            intakeList.stream()
+                    .forEach((intake) -> {
+                        Long foodId = intake.getFoodId();
+                        Double findScore = redisIntakeService.getScore(intakeRankCondition.rankType(), memberId, foodId, period);
+                        BigDecimal value = intake.getCalculationKcal();
+                        // key에대한 member가 없으면 새롭게 member생성
+                        if (Objects.isNull(findScore)) {
+
+                            Double doubleValue = Double.valueOf(String.valueOf(value));
+                            redisIntakeService.save(intakeRankCondition.rankType(), memberId, foodId, period, doubleValue);
+                            return;
+                        }
+                        // key에 대한 member가 있으면 1추가
+                        Double doubleValue = findScore + Double.valueOf(String.valueOf(value));
+                        redisIntakeService.save(intakeRankCondition.rankType(), memberId, foodId, period, doubleValue);
+                    });
+            return;
+        }
     }
 }

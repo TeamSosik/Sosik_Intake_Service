@@ -1,5 +1,6 @@
 package com.example.sosikintakeservice.redis;
 
+import com.example.sosikintakeservice.dto.api.ResponseGetFood;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -27,9 +28,9 @@ public class CacheFood {
     private BigDecimal protein;
     private BigDecimal fat;
     private BigDecimal kcal;
-    private BigDecimal size;
-    private String createdBy; // 생성자
-    private String modifiedBy;//수정자
+    private BigDecimal sugars;
+    private String manufacturer;
+    private String image;
     private LocalDateTime createdAt; // 생성일시
     private LocalDateTime modifiedAt; //수정일시
 
@@ -41,9 +42,9 @@ public class CacheFood {
             BigDecimal protein,
             BigDecimal fat,
             BigDecimal kcal,
-            BigDecimal size,
-            String createdBy,
-            String modifiedBy,
+            BigDecimal sugars,
+            String manufacturer,
+            String image,
             LocalDateTime createdAt,
             LocalDateTime modifiedAt
     ) {
@@ -52,12 +53,29 @@ public class CacheFood {
         this.carbo = carbo;
         this.protein = protein;
         this.fat = fat;
+        this.sugars = sugars;
         this.kcal = kcal;
-        this.size = size;
-        this.createdBy = createdBy;
-        this.modifiedBy = modifiedBy;
+        this.manufacturer = manufacturer;
+        this.image = image;
         this.createdAt = createdAt;
         this.modifiedAt = modifiedAt;
+    }
+
+    public static CacheFood create(ResponseGetFood responseGetFood) {
+
+        return CacheFood.builder()
+                .foodId(responseGetFood.getFoodId())
+                .name(responseGetFood.getName())
+                .carbo(responseGetFood.getCarbo())
+                .protein(responseGetFood.getProtein())
+                .fat(responseGetFood.getFat())
+                .sugars(responseGetFood.getSugars())
+                .kcal(responseGetFood.getKcal())
+                .manufacturer(responseGetFood.getManufacturer())
+                .image(responseGetFood.getImage())
+                .createdAt(responseGetFood.getCreatedAt())
+                .modifiedAt(responseGetFood.getModifiedAt())
+                .build();
     }
 
 
