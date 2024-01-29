@@ -41,7 +41,7 @@ public class RedisIntakeService {
         return prefix + KEY_PREFIX + ":" + memberId + ":" + period;
     }
 
-    public void save(String selectCondition, Long memberId, Long foodId, int period, Integer value) {
+    public void save(String selectCondition, Long memberId, Long foodId, int period, Double value) {
 
         String key = getKey(selectCondition, memberId, period);
 

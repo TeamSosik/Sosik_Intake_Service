@@ -124,7 +124,6 @@ public class RedisIntakeServiceTest {
         assertThat(findScore).isEqualTo(1);
 
         // reset
-
         init(prefix, memberId, period);
     }
 
@@ -139,9 +138,10 @@ public class RedisIntakeServiceTest {
         int period = 20;
         Long foodId = 1L;
         Integer value = 2;
+        Double doubleValue = Double.valueOf(value);
 
         // when
-        redisIntakeService.save(selectCondition, memberId, foodId, period, value);
+        redisIntakeService.save(selectCondition, memberId, foodId, period, doubleValue);
 
         String key = prefix + "IntakeRank" + ":" + memberId + ":" + period;
 
