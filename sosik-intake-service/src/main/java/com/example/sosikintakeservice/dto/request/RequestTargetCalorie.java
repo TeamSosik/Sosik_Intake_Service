@@ -8,8 +8,8 @@ import lombok.Builder;
 
 
 @Builder
-public record RequestTargetCalorie( @NotNull
-                                    Integer dayTargetKcal
-
+public record RequestTargetCalorie(@NotNull
+                                   Integer dayTargetKcal
 ) {
+
 }

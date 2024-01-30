@@ -7,7 +7,7 @@ public record ResponseGetIntakeRank(Long foodId,
                                     String name,
                                     double value,
                                     int rank
-                                    ) {
+) {
 
     public static ResponseGetIntakeRank create(Long foodId, String name, Double value) {
         return  ResponseGetIntakeRank.builder()
@@ -16,6 +16,4 @@ public record ResponseGetIntakeRank(Long foodId,
                 .value(value)
                 .build();
     }
-
-
 }

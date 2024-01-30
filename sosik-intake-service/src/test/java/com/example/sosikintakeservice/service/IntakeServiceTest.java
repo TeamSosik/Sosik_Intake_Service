@@ -1,10 +1,10 @@
 package com.example.sosikintakeservice.service;
 
 import com.example.sosikintakeservice.api.FoodServiceApi;
-import com.example.sosikintakeservice.dto.RequestIntakeRank;
 import com.example.sosikintakeservice.dto.api.ResponseGetFood;
 import com.example.sosikintakeservice.dto.request.RequestGetFoodInfo;
 import com.example.sosikintakeservice.dto.request.RequestIntake;
+import com.example.sosikintakeservice.dto.request.RequestIntakeRank;
 import com.example.sosikintakeservice.dto.response.ResponseGetIntake;
 import com.example.sosikintakeservice.dto.response.ResponseGetIntakeRank;
 import com.example.sosikintakeservice.dto.response.Result;

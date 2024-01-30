@@ -1,6 +1,6 @@
 package com.example.sosikintakeservice.controller;
 
-import com.example.sosikintakeservice.dto.RequestIntakeRank;
+import com.example.sosikintakeservice.dto.request.RequestIntakeRank;
 import com.example.sosikintakeservice.dto.response.ResponseGetIntakeRank;
 import com.example.sosikintakeservice.exception.ApplicationException;
 import com.example.sosikintakeservice.exception.ErrorCode;
