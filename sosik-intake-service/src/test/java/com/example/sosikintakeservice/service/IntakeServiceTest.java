@@ -1,7 +1,7 @@
 package com.example.sosikintakeservice.service;
 
 import com.example.sosikintakeservice.api.FoodServiceApi;
-import com.example.sosikintakeservice.dto.IntakeRankCondition;
+import com.example.sosikintakeservice.dto.RequestIntakeRank;
 import com.example.sosikintakeservice.dto.api.ResponseGetFood;
 import com.example.sosikintakeservice.dto.request.RequestGetFoodInfo;
 import com.example.sosikintakeservice.dto.request.RequestIntake;
@@ -152,7 +152,7 @@ public class IntakeServiceTest {
     void givenEmptyArrayListWhenFindIntakeListThenSize0() {
 
         // given
-        IntakeRankCondition intakeRankCondition = IntakeRankCondition.builder()
+        RequestIntakeRank requestIntakeRank = RequestIntakeRank.builder()
                 .rankType("food")
                 .build();
         Long memberId = 1L;
@@ -165,7 +165,7 @@ public class IntakeServiceTest {
                 .findByMemberIdAndCreatedAtBetween(memberId, start, end);
 
         // when
-        List<ResponseGetIntakeRank> result = intakeService.getRankList(intakeRankCondition, memberId, period);
+        List<ResponseGetIntakeRank> result = intakeService.getRankList(requestIntakeRank, memberId, period);
 
         // then
         assertThat(result.size()).isEqualTo(0);
@@ -177,7 +177,7 @@ public class IntakeServiceTest {
     void givenIntakeEntityWhenDeleteRedisKeyThenCheckDeleteMethod() {
 
         // given
-        IntakeRankCondition intakeRankCondition = IntakeRankCondition.builder()
+        RequestIntakeRank requestIntakeRank = RequestIntakeRank.builder()
                 .rankType("food")
                 .build();
         Long memberId = 1L;
@@ -200,7 +200,7 @@ public class IntakeServiceTest {
 //                .delete(Mockito.any(String.class), Mockito.any(Long.class), Mockito.any(Integer.class));
 
         // when
-        List<ResponseGetIntakeRank> result = intakeService.getRankList(intakeRankCondition, memberId, period);
+        List<ResponseGetIntakeRank> result = intakeService.getRankList(requestIntakeRank, memberId, period);
 
         // then
         Mockito.verify(redisIntakeService, Mockito.times(1)).delete(Mockito.any(String.class), Mockito.any(Long.class), Mockito.any(Integer.class));
@@ -212,7 +212,7 @@ public class IntakeServiceTest {
     void givenFoodTypeWhenSaveThenSuccessButNotExist() {
 
         // given
-        IntakeRankCondition intakeRankCondition = IntakeRankCondition.builder()
+        RequestIntakeRank requestIntakeRank = RequestIntakeRank.builder()
                 .rankType("food")
                 .build();
         Long memberId = 1L;
@@ -233,7 +233,7 @@ public class IntakeServiceTest {
                 .when(redisIntakeService)
                 .getScore(Mockito.any(String.class), Mockito.any(Long.class), Mockito.any(Long.class), Mockito.any(Integer.class));
         // when
-        List<ResponseGetIntakeRank> result = intakeService.getRankList(intakeRankCondition, memberId, period);
+        List<ResponseGetIntakeRank> result = intakeService.getRankList(requestIntakeRank, memberId, period);
 
         // then
         Mockito.verify(redisIntakeService, Mockito.times(1)).save(Mockito.any(String.class), Mockito.any(Long.class), Mockito.any(Long.class), Mockito.any(Integer.class), Mockito.any(Double.class));
@@ -244,7 +244,7 @@ public class IntakeServiceTest {
     void givenFoodTypeWhenSaveThenSuccessButExist() {
 
         // given
-        IntakeRankCondition intakeRankCondition = IntakeRankCondition.builder()
+        RequestIntakeRank intakeRankCondition = RequestIntakeRank.builder()
                 .rankType("food")
                 .build();
         Long memberId = 1L;
@@ -279,7 +279,7 @@ public class IntakeServiceTest {
     ) {
 
         // given
-        IntakeRankCondition intakeRankCondition = IntakeRankCondition.builder()
+        RequestIntakeRank intakeRankCondition = RequestIntakeRank.builder()
                 .rankType(rankType)
                 .build();
         Long memberId = 1L;
@@ -326,7 +326,7 @@ public class IntakeServiceTest {
     void givenRankConditionAndItakeEntitiesWhenGetRankListThenSuccess() {
 
         // given
-        IntakeRankCondition intakeRankCondition = IntakeRankCondition.builder()
+        RequestIntakeRank intakeRankCondition = RequestIntakeRank.builder()
                 .rankType("kcal")
                 .build();
         Long memberId = 1L;
@@ -360,7 +360,7 @@ public class IntakeServiceTest {
     @Test
     void givenRankConditionAndIntakeEntitiesAndIsCacheTrueWhenGetRankListThenCheckSuccess() {
         // given
-        IntakeRankCondition intakeRankCondition = IntakeRankCondition.builder()
+        RequestIntakeRank intakeRankCondition = RequestIntakeRank.builder()
                 .rankType("food")
                 .build();
         Long memberId = 1L;
@@ -440,7 +440,7 @@ public class IntakeServiceTest {
     @Test
     void givenRankConditionAndIntakeEntitiesAndIsCacheFalseWhenGetRankListThenThrowException() {
         // given
-        IntakeRankCondition intakeRankCondition = IntakeRankCondition.builder()
+        RequestIntakeRank intakeRankCondition = RequestIntakeRank.builder()
                 .rankType("food")
                 .build();
         Long memberId = 1L;
@@ -538,7 +538,7 @@ public class IntakeServiceTest {
     @Test
     void givenRankConditionAndIntakeEntitiesAndIsCacheFalseWhenFailingConnectionThenThrowException() {
         // given
-        IntakeRankCondition intakeRankCondition = IntakeRankCondition.builder()
+        RequestIntakeRank intakeRankCondition = RequestIntakeRank.builder()
                 .rankType("food")
                 .build();
         Long memberId = 1L;
@@ -638,7 +638,7 @@ public class IntakeServiceTest {
     void givenRankConditionAndIntakeEntitiesAndIsCacheFalseWhenGetRankListThenCheckSuccess() {
         // given
         // given
-        IntakeRankCondition intakeRankCondition = IntakeRankCondition.builder()
+        RequestIntakeRank requestIntakeRank = RequestIntakeRank.builder()
                 .rankType("food")
                 .build();
         Long memberId = 1L;
@@ -662,13 +662,13 @@ public class IntakeServiceTest {
 
         Mockito.doReturn(Double.valueOf(2))
                 .when(redisIntakeService)
-                .getScore(intakeRankCondition.rankType(), memberId, foodId3, period);
+                .getScore(requestIntakeRank.rankType(), memberId, foodId3, period);
         Mockito.doReturn(Double.valueOf(1))
                 .when(redisIntakeService)
-                .getScore(intakeRankCondition.rankType(), memberId, foodId2, period);
+                .getScore(requestIntakeRank.rankType(), memberId, foodId2, period);
         Mockito.doReturn(Double.valueOf(3))
                 .when(redisIntakeService)
-                .getScore(intakeRankCondition.rankType(), memberId, foodId1, period);
+                .getScore(requestIntakeRank.rankType(), memberId, foodId1, period);
 
         Set<ZSetOperations.TypedTuple<String>> setTypedTuple = new LinkedHashSet<>();
 
@@ -681,7 +681,7 @@ public class IntakeServiceTest {
 
         Mockito.doReturn(setTypedTuple)
                 .when(redisIntakeService)
-                .getRankRangeSet(intakeRankCondition.rankType(), memberId, period);
+                .getRankRangeSet(requestIntakeRank.rankType(), memberId, period);
         Mockito.doReturn(
                       Optional.empty()
                 )
@@ -729,7 +729,7 @@ public class IntakeServiceTest {
 
 
         // when
-        List<ResponseGetIntakeRank> result = intakeService.getRankList(intakeRankCondition, memberId, period);
+        List<ResponseGetIntakeRank> result = intakeService.getRankList(requestIntakeRank, memberId, period);
 
         // then
         Mockito.verify(redisFoodRepository, Mockito.times(3)).save(Mockito.any(CacheFood.class));

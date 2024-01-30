@@ -1,6 +1,6 @@
 package com.example.sosikintakeservice.controller;
 
-import com.example.sosikintakeservice.dto.IntakeRankCondition;
+import com.example.sosikintakeservice.dto.RequestIntakeRank;
 import com.example.sosikintakeservice.dto.request.RequestIntake;
 import com.example.sosikintakeservice.dto.response.ResponseGetCreateAt;
 import com.example.sosikintakeservice.dto.response.ResponseGetIntake;
@@ -10,7 +10,15 @@ import com.example.sosikintakeservice.service.IntakeService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -49,11 +57,11 @@ public class IntakeController {
 
     @GetMapping("/rank")
     public Result<List<ResponseGetIntakeRank>> getRankList(
-                                @Valid IntakeRankCondition intakeRankCondition,
+                                @Valid RequestIntakeRank requestIntakeRank,
                                 @RequestHeader Long memberId,
                                 @RequestParam(defaultValue = "30") int period) {
 
-        List<ResponseGetIntakeRank> body = intakeService.getRankList(intakeRankCondition, memberId, period);
+        List<ResponseGetIntakeRank> body = intakeService.getRankList(requestIntakeRank, memberId, period);
 
         return Result.success(body);
     }
