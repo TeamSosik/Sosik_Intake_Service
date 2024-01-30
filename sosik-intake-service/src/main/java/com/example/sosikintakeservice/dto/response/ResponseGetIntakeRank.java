@@ -9,5 +9,13 @@ public record ResponseGetIntakeRank(Long foodId,
                                     int rank
                                     ) {
 
+    public static ResponseGetIntakeRank create(Long foodId, String name, Double value) {
+        return  ResponseGetIntakeRank.builder()
+                .foodId(foodId)
+                .name(name)
+                .value(value)
+                .build();
+    }
+
 
 }

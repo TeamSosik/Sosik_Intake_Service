@@ -38,16 +38,9 @@ public class IntakeServiceImpl implements IntakeService{
     private final FoodServiceApi foodServiceApi;
 
     public String createIntake(Long memberId, RequestIntake intakeDTO) {
-        IntakeEntity intake = IntakeEntity.builder()
-                .memberId(memberId)
-                .foodId(intakeDTO.foodId())
-                .calculationCarbo(intakeDTO.calculationCarbo())
-                .calculationProtein(intakeDTO.calculationProtein())
-                .calculationFat(intakeDTO.calculationFat())
-                .calculationKcal(intakeDTO.calculationKcal())
-                .foodAmount(intakeDTO.foodAmount())
-                .category(intakeDTO.category())
-                .build();
+
+        IntakeEntity intake = IntakeEntity.create(memberId, intakeDTO);
+
         intakeRepository.save(intake);
 
         return "ok";
@@ -59,21 +52,11 @@ public class IntakeServiceImpl implements IntakeService{
                 .map(intakeEntity -> {
                     Optional<CacheFood> optionalRedisFood = redisFoodRepository.findById(intakeEntity.getFoodId());
                     if (optionalRedisFood.isPresent()) {
-                        CacheFood redisFood = optionalRedisFood.get();
 
+                        CacheFood redisFood = optionalRedisFood.get();
                         String name = redisFood.getName();
-                        return ResponseGetIntake.builder()
-                                .id(intakeEntity.getId())
-                                .memberId(intakeEntity.getMemberId())
-                                .foodId(intakeEntity.getFoodId())
-                                .name(redisFood.getName())
-                                .calculationCarbo(intakeEntity.getCalculationCarbo())
-                                .calculationProtein(intakeEntity.getCalculationProtein())
-                                .calculationFat(intakeEntity.getCalculationFat())
-                                .calculationKcal(intakeEntity.getCalculationKcal())
-                                .foodAmount(intakeEntity.getFoodAmount())
-                                .category(intakeEntity.getCategory())
-                                .build();
+
+                        return ResponseGetIntake.create(intakeEntity ,name);
                     } else {
                         return null;
                     }
@@ -122,17 +105,11 @@ public class IntakeServiceImpl implements IntakeService{
 
         result = rankRangeSet.stream()
                     .map((data) -> {
+
                         Long foodId = Long.valueOf(data.getValue());
-                        // redis에서 name 불러오기
-                        String name = "";
-                        name = getFoodName(foodId, name);
+                        String name = getFoodName(foodId);
 
-                        return ResponseGetIntakeRank.builder()
-                                .foodId(foodId)
-                                .name(name)
-                                .value(data.getScore())
-                                .build();
-
+                        return ResponseGetIntakeRank.create(foodId, name, data.getScore());
                     })
                     .collect(Collectors.toList());
 
@@ -140,7 +117,9 @@ public class IntakeServiceImpl implements IntakeService{
 
     }
 
-    private String getFoodName(Long foodId, String name) {
+    private String getFoodName(Long foodId) {
+
+        String name = "";
         Optional<CacheFood> optionalRedisFood = redisFoodRepository.findById(foodId);
 
         if(!optionalRedisFood.isEmpty()) {
@@ -180,6 +159,7 @@ public class IntakeServiceImpl implements IntakeService{
                     .forEach((intake) -> {
                         Long foodId = intake.getFoodId();
                         Double findScore = redisIntakeService.getScore(requestIntakeRank.rankType(), memberId, foodId, period);
+
                         // key에대한 member가 없으면 새롭게 member생성
                         if (Objects.isNull(findScore)) {
                             int value = 1;
@@ -187,6 +167,7 @@ public class IntakeServiceImpl implements IntakeService{
                             redisIntakeService.save(requestIntakeRank.rankType(), memberId, foodId, period, doubleValue);
                             return;
                         }
+
                         // key에 대한 member가 있으면 1추가
                         Double doubleValue = Double.valueOf(findScore.intValue() + 1);
                         redisIntakeService.save(requestIntakeRank.rankType(), memberId, foodId, period, doubleValue);
@@ -199,6 +180,7 @@ public class IntakeServiceImpl implements IntakeService{
                         Long foodId = intake.getFoodId();
                         Double findScore = redisIntakeService.getScore(requestIntakeRank.rankType(), memberId, foodId, period);
                         BigDecimal value = intake.getCalculationKcal();
+
                         // key에대한 member가 없으면 새롭게 member생성
                         if (Objects.isNull(findScore)) {
 
@@ -206,6 +188,7 @@ public class IntakeServiceImpl implements IntakeService{
                             redisIntakeService.save(requestIntakeRank.rankType(), memberId, foodId, period, doubleValue);
                             return;
                         }
+
                         // key에 대한 member가 있으면 1추가
                         Double doubleValue = findScore + Double.valueOf(String.valueOf(value));
                         redisIntakeService.save(requestIntakeRank.rankType(), memberId, foodId, period, doubleValue);
