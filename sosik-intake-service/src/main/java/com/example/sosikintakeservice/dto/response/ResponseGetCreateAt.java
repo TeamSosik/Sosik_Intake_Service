@@ -4,7 +4,8 @@ import com.example.sosikintakeservice.model.entity.Category;
 
 import java.time.LocalDate;
 
-public record ResponseGetCreateAt(
-        Category category,
-        LocalDate createdAt) {
+public record ResponseGetCreateAt(Category category,
+                                  LocalDate createdAt
+) {
+
 }

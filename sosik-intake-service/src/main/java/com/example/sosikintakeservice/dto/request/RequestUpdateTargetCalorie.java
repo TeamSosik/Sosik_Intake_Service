@@ -11,6 +11,6 @@ public record RequestUpdateTargetCalorie(@NotNull
                                          Integer dayTargetKcal,
                                          @DateTimeFormat(pattern = "yyyy-MM-dd")
                                          LocalDate createdAt
-                                ) {
+) {
 
 }

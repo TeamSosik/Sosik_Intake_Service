@@ -6,9 +6,9 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDate;
 
 @Builder
-public record RequestGetIntake(
-    Long memberId,
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    LocalDate createdAt
+public record RequestGetIntake(Long memberId,
+                               @DateTimeFormat(pattern = "yyyy-MM-dd")
+                               LocalDate createdAt
 ){
+
 }
