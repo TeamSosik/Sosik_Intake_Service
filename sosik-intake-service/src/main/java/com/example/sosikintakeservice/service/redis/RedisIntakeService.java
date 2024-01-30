@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
+
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -16,9 +17,9 @@ public class RedisIntakeService {
     private long expiredTime = 60 * 10;
 
 
-    public Double getScore(Long memberId, Long foodId, Integer period) {
+    public Double getScore(String selectCondition, Long memberId, Long foodId, Integer period) {
 
-        String key = getKey(memberId, period);
+        String key = getKey(selectCondition, memberId, period);
 
         String stringFoodId = String.valueOf(foodId);
 
@@ -27,14 +28,22 @@ public class RedisIntakeService {
         return value;
     }
 
-    String getKey(Long memberId, Integer period) {
+    // TODO : if, else if를 사용안 하는 방법을 찾아보아야 합니다.
+    public String getKey(String selectCondition, Long memberId, Integer period) {
 
-        return KEY_PREFIX + ":" + memberId + ":" + period;
+        String prefix = null;
+        if("kcal".equalsIgnoreCase(selectCondition)) {
+            prefix = "Kcal";
+        } else if("food".equalsIgnoreCase(selectCondition)) {
+            prefix = "Food";
+        }
+
+        return prefix + KEY_PREFIX + ":" + memberId + ":" + period;
     }
 
-    public void save(Long memberId, Long foodId, int period, Integer value) {
+    public void save(String selectCondition, Long memberId, Long foodId, int period, Double value) {
 
-        String key = getKey(memberId, period);
+        String key = getKey(selectCondition, memberId, period);
 
         String stringFoodId = String.valueOf(foodId);
 
@@ -42,16 +51,16 @@ public class RedisIntakeService {
         redisTemplate.opsForZSet().add(key, stringFoodId, value);
     }
 
-    public Set<ZSetOperations.TypedTuple<String>> getRankRangeSet(Long memberId, Integer period) {
+    public Set<ZSetOperations.TypedTuple<String>> getRankRangeSet(String selectCondition, Long memberId, Integer period) {
 
-        String key = getKey(memberId, period);
+        String key = getKey(selectCondition, memberId, period);
 
         return redisTemplate.opsForZSet().reverseRangeWithScores(key, 0, -1);
     }
 
-    public void delete(Long memberId, Integer period) {
+    public void delete(String selectCondition, Long memberId, Integer period) {
 
-        String key = getKey(memberId, period);
+        String key = getKey(selectCondition, memberId, period);
 
         redisTemplate.delete(key);
     }

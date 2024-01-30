@@ -1,11 +1,13 @@
 package com.example.sosikintakeservice.controller;
 
+import com.example.sosikintakeservice.dto.IntakeRankCondition;
 import com.example.sosikintakeservice.dto.request.RequestIntake;
 import com.example.sosikintakeservice.dto.response.ResponseGetCreateAt;
 import com.example.sosikintakeservice.dto.response.ResponseGetIntake;
 import com.example.sosikintakeservice.dto.response.ResponseGetIntakeRank;
 import com.example.sosikintakeservice.dto.response.Result;
 import com.example.sosikintakeservice.service.IntakeService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -46,9 +48,13 @@ public class IntakeController {
     }
 
     @GetMapping("/rank")
-    public Result<List<ResponseGetIntakeRank>> getRankList(@RequestHeader Long memberId,
-                                 @RequestParam(defaultValue = "30") int period) {
-        List<ResponseGetIntakeRank> body = intakeService.getRankList(memberId, period);
+    public Result<List<ResponseGetIntakeRank>> getRankList(
+                                @Valid IntakeRankCondition intakeRankCondition,
+                                @RequestHeader Long memberId,
+                                @RequestParam(defaultValue = "30") int period) {
+
+        List<ResponseGetIntakeRank> body = intakeService.getRankList(intakeRankCondition, memberId, period);
+
         return Result.success(body);
     }
 
