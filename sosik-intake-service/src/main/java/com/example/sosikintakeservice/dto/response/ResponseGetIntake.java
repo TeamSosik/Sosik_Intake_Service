@@ -2,8 +2,8 @@ package com.example.sosikintakeservice.dto.response;
 
 import com.example.sosikintakeservice.model.entity.Category;
 import com.example.sosikintakeservice.model.entity.IntakeEntity;
-import com.example.sosikintakeservice.redis.CacheFood;
 import lombok.Builder;
+
 import java.math.BigDecimal;
 
 @Builder
