@@ -8,6 +8,6 @@ import lombok.Builder;
 @Builder
 public record IntakeRankCondition(@NotBlank(message = "값이 비어있을 수 없습니다.")
                                   String rankType
-
 ) {
+
 }

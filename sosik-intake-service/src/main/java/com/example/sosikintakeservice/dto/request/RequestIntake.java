@@ -6,14 +6,13 @@ import lombok.Builder;
 import java.math.BigDecimal;
 
 @Builder
-public record RequestIntake(
-    Long foodId,
-    BigDecimal calculationCarbo,
-    BigDecimal calculationProtein,
-    BigDecimal calculationFat,
-    BigDecimal calculationKcal,
-    Integer foodAmount,
-    Category category
+public record RequestIntake(Long foodId,
+                            BigDecimal calculationCarbo,
+                            BigDecimal calculationProtein,
+                            BigDecimal calculationFat,
+                            BigDecimal calculationKcal,
+                            Integer foodAmount,
+                            Category category
 ){
     
 }
