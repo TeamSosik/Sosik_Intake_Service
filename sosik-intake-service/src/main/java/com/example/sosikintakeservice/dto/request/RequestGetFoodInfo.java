@@ -4,10 +4,11 @@ import lombok.Builder;
 
 @Builder
 public record RequestGetFoodInfo(String kcal,
-                                String carbo,
-                                String protein,
-                                String fat,
-                                String total
+                                 String carbo,
+                                 String protein,
+                                 String fat,
+                                 String total
+
 ) {
 
 }

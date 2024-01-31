@@ -18,6 +18,7 @@ public record ResponseGetIntake(Long id,
                                 BigDecimal calculationKcal,
                                 Integer foodAmount,
                                 Category category
+
 ) {
 
    public static ResponseGetIntake create(IntakeEntity intakeEntity, String name) {

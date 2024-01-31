@@ -14,25 +14,25 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping("/target-calorie")
+@RequestMapping("/target-calorie/v1/")
 public class TargetCalorieController {
     private final DayTargetCalorieService dayTargetCalorieService;
 
-    @PostMapping("/v1/")
+    @PostMapping
     public Result<Void> createTargetCalorie(@RequestHeader Long memberId,
                                             @RequestBody @Valid final RequestTargetCalorie requestTargetCalorie) {
         dayTargetCalorieService.createTargetCalorie(memberId,requestTargetCalorie);
         return Result.success();
     }
 
-    @PatchMapping("/v1/")
+    @PatchMapping
     public Result<Void> updateTargetCalorie(@RequestHeader Long memberId ,
                                             @RequestBody @Valid final RequestUpdateTargetCalorie requestUpdateTargetCalorie) {
         dayTargetCalorieService.updateDayTargetCalorie(memberId, requestUpdateTargetCalorie);
         return Result.success();
     }
 
-    @GetMapping("/v1/{today}")
+    @GetMapping("{today}")
     public Result<ResponseGetDayTargetCalorie> getTargetCalorie(@RequestHeader Long memberId, @PathVariable String today) {
         ResponseGetDayTargetCalorie dayTargetCalorie = dayTargetCalorieService.getDayTargetCalorie(memberId,today);
         if(dayTargetCalorie==null){

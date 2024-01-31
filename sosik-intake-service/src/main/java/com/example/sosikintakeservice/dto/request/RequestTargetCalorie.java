@@ -10,6 +10,7 @@ import lombok.Builder;
 @Builder
 public record RequestTargetCalorie(@NotNull
                                    Integer dayTargetKcal
+
 ) {
 
 }
