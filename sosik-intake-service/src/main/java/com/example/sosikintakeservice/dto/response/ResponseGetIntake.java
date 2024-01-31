@@ -5,19 +5,18 @@ import lombok.Builder;
 import java.math.BigDecimal;
 
 @Builder
-public record ResponseGetIntake(
-        Long id,
-        Long memberId,
-        Long foodId,
-        String name,
-        Long dayTargetCalorieId,
-        BigDecimal calculationCarbo,
-        BigDecimal calculationProtein,
-        BigDecimal calculationFat,
-        BigDecimal calculationKcal,
-        Integer foodAmount,
-        Category category
+public record ResponseGetIntake(Long id,
+                                Long memberId,
+                                Long foodId,
+                                String name,
+                                Long dayTargetCalorieId,
+                                BigDecimal calculationCarbo,
+                                BigDecimal calculationProtein,
+                                BigDecimal calculationFat,
+                                BigDecimal calculationKcal,
+                                Integer foodAmount,
+                                Category category
 
-   ) {
+) {
 
 }

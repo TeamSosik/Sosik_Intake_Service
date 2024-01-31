@@ -31,8 +31,8 @@ public class CacheFood {
     private BigDecimal sugars;
     private String manufacturer;
     private String image;
-    private LocalDateTime createdAt; // 생성일시
-    private LocalDateTime modifiedAt; //수정일시
+    private LocalDateTime createdAt;
+    private LocalDateTime modifiedAt;
 
     @Builder
     public CacheFood(
