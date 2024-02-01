@@ -7,6 +7,8 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import com.example.sosikintakeservice.dto.request.RequestIntake;
+import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,6 +20,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @Table(name = "intake")
 public class IntakeEntity extends AuditingFields{
+
     @Id
     @GeneratedValue
     private Long id;
@@ -63,4 +66,17 @@ public class IntakeEntity extends AuditingFields{
     }
 
 
+    public static IntakeEntity create(Long memberId, RequestIntake intakeDTO) {
+
+        return IntakeEntity.builder()
+                .memberId(memberId)
+                .foodId(intakeDTO.foodId())
+                .calculationCarbo(intakeDTO.calculationCarbo())
+                .calculationProtein(intakeDTO.calculationProtein())
+                .calculationFat(intakeDTO.calculationFat())
+                .calculationKcal(intakeDTO.calculationKcal())
+                .foodAmount(intakeDTO.foodAmount())
+                .category(intakeDTO.category())
+                .build();
+    }
 }

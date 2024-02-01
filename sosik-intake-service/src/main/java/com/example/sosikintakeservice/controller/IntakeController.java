@@ -1,6 +1,6 @@
 package com.example.sosikintakeservice.controller;
 
-import com.example.sosikintakeservice.dto.IntakeRankCondition;
+import com.example.sosikintakeservice.dto.request.RequestIntakeRank;
 import com.example.sosikintakeservice.dto.request.RequestIntake;
 import com.example.sosikintakeservice.dto.response.ResponseGetCreateAt;
 import com.example.sosikintakeservice.dto.response.ResponseGetIntake;
@@ -57,11 +57,11 @@ public class IntakeController {
 
     @GetMapping("/rank")
     public Result<List<ResponseGetIntakeRank>> getRankList(
-                                @Valid IntakeRankCondition intakeRankCondition,
+                                @Valid RequestIntakeRank requestIntakeRank,
                                 @RequestHeader Long memberId,
                                 @RequestParam(defaultValue = "30") int period) {
 
-        List<ResponseGetIntakeRank> body = intakeService.getRankList(intakeRankCondition, memberId, period);
+        List<ResponseGetIntakeRank> body = intakeService.getRankList(requestIntakeRank, memberId, period);
 
         return Result.success(body);
     }

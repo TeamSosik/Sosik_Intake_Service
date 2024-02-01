@@ -1,6 +1,6 @@
 package com.example.sosikintakeservice.controller;
 
-import com.example.sosikintakeservice.dto.IntakeRankCondition;
+import com.example.sosikintakeservice.dto.request.RequestIntakeRank;
 import com.example.sosikintakeservice.dto.response.ResponseGetIntakeRank;
 import com.example.sosikintakeservice.exception.ApplicationException;
 import com.example.sosikintakeservice.exception.ErrorCode;
@@ -135,14 +135,14 @@ public class IntakeControllerTest {
         String url = "/intake/v1/rank";
         String memberId = "1";
         String param = "food";
-        IntakeRankCondition intakeRankCondition = IntakeRankCondition.builder()
+        RequestIntakeRank requestIntakeRank = RequestIntakeRank.builder()
                         .rankType(param)
                         .build();
 
         Mockito.doThrow(
                 new ApplicationException(ErrorCode.INTERNAL_SERVER_ERROR)
         ).when(intakeService)
-                .getRankList(Mockito.any(IntakeRankCondition.class), Mockito.any(Long.class), Mockito.any(Integer.class));
+                .getRankList(Mockito.any(RequestIntakeRank.class), Mockito.any(Long.class), Mockito.any(Integer.class));
 
         // when
         ResultActions resultActions = mockMvc.perform(
@@ -156,10 +156,6 @@ public class IntakeControllerTest {
         resultActions.andExpect(MockMvcResultMatchers.status().isInternalServerError());
         resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.code").value(HttpStatus.INTERNAL_SERVER_ERROR.name()));
         resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.message").value("내부 서버의 오류입니다."));
-
-
-
-
     }
 
 
@@ -170,7 +166,7 @@ public class IntakeControllerTest {
         //given
         String url = "/intake/v1/rank";
         String rankType = "kcal";
-        IntakeRankCondition intakeRankCondition = IntakeRankCondition.builder()
+        RequestIntakeRank requestIntakeRank = RequestIntakeRank.builder()
                 .rankType("kcal")
                         .build();
 
@@ -183,7 +179,7 @@ public class IntakeControllerTest {
         );
 
         // then
-        Mockito.verify(intakeService, Mockito.times(1)).getRankList(intakeRankCondition, 1L, 30);
+        Mockito.verify(intakeService, Mockito.times(1)).getRankList(requestIntakeRank, 1L, 30);
     }
 
     @DisplayName("섭취랭크조회성공_조회데이터가없을때")
@@ -195,12 +191,12 @@ public class IntakeControllerTest {
         int periodId = 7;
         String url = "/intake/v1/rank";
         String rankType = "food";
-        IntakeRankCondition intakeRankCondition = IntakeRankCondition.builder()
+        RequestIntakeRank requestIntakeRank = RequestIntakeRank.builder()
                 .rankType("food")
                 .build();
         Mockito.doReturn(Collections.emptyList())
                 .when(intakeService)
-                .getRankList(intakeRankCondition, memberId, periodId);
+                .getRankList(requestIntakeRank, memberId, periodId);
 
         // when
         ResultActions resultActions = mockMvc.perform(
@@ -212,7 +208,7 @@ public class IntakeControllerTest {
         );
 
         // then
-        Mockito.verify(intakeService, Mockito.times(1)).getRankList(intakeRankCondition, 1L, 7);
+        Mockito.verify(intakeService, Mockito.times(1)).getRankList(requestIntakeRank, 1L, 7);
         resultActions.andExpect(MockMvcResultMatchers.status().isOk());
         resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.result.size()").value(0));
     }
@@ -237,7 +233,7 @@ public class IntakeControllerTest {
                         )
                 )
                 .when(intakeService)
-                .getRankList(Mockito.any(IntakeRankCondition.class), Mockito.any(Long.class), Mockito.any(Integer.class));
+                .getRankList(Mockito.any(RequestIntakeRank.class), Mockito.any(Long.class), Mockito.any(Integer.class));
 
         // when
         ResultActions resultActions = mockMvc.perform(
@@ -249,11 +245,11 @@ public class IntakeControllerTest {
         );
 
         // then
-        IntakeRankCondition intakeRankCondition = IntakeRankCondition.builder()
+        RequestIntakeRank requestIntakeRank = RequestIntakeRank.builder()
                         .rankType("kcal")
                         .build();
 
-        Mockito.verify(intakeService, Mockito.times(1)).getRankList(intakeRankCondition, 1L, 7);
+        Mockito.verify(intakeService, Mockito.times(1)).getRankList(requestIntakeRank, 1L, 7);
         resultActions.andExpect(MockMvcResultMatchers.status().isOk());
         resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.result.size()").value(2));
     }
