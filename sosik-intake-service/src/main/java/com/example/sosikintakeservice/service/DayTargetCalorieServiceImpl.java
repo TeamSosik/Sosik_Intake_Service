@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -26,13 +27,11 @@ public class DayTargetCalorieServiceImpl implements DayTargetCalorieService {
         LocalDate currentTime = LocalDate.now();
         DayTargetCalorieEntity entity = targetCalorieRepository
                 .findByMemberIdAndCreatedAt(memberId,currentTime).orElse(null);
-        if (entity != null) {  //오늘 기록했다면
+        if (Objects.nonNull(entity)) {  //오늘 기록했다면
             throw new ApplicationException(ErrorCode.EXISTENCE_TARGETCALORIE_ERROR);
         } else { //오늘 기록 안했다면
-            DayTargetCalorieEntity dayTargetCalorieEntity = DayTargetCalorieEntity.builder()
-                    .memberId(memberId)
-                    .dayTargetKcal(requestTargetCalorie.dayTargetKcal())
-                    .build();
+            DayTargetCalorieEntity dayTargetCalorieEntity = DayTargetCalorieEntity
+                    .buildDayTargetCalorie(memberId,requestTargetCalorie);
             targetCalorieRepository.save(dayTargetCalorieEntity);
         }
         return requestTargetCalorie;
@@ -54,14 +53,13 @@ public class DayTargetCalorieServiceImpl implements DayTargetCalorieService {
         LocalDate localDate = LocalDate.parse(today, inputFormatter);
         DayTargetCalorieEntity dayTargetCalorieEntity = targetCalorieRepository
                 .findByMemberIdAndCreatedAt(memberId, localDate).orElse(null);
-        if (dayTargetCalorieEntity==null){
+        if (Objects.isNull(dayTargetCalorieEntity)){
             ResponseGetDayTargetCalorie responseGetDayTargetCalorie = null;
             return responseGetDayTargetCalorie;
         }
         else {
-            ResponseGetDayTargetCalorie responseGetDayTargetCalorie = ResponseGetDayTargetCalorie.builder()
-                    .dayTargetKcal(dayTargetCalorieEntity.getDayTargetKcal())
-                    .build();
+            ResponseGetDayTargetCalorie responseGetDayTargetCalorie = ResponseGetDayTargetCalorie
+                    .buildResponseGetDayTargetCalorie(dayTargetCalorieEntity);
             return responseGetDayTargetCalorie;
         }
     }
