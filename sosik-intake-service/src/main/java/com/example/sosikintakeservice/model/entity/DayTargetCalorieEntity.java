@@ -1,5 +1,6 @@
 package com.example.sosikintakeservice.model.entity;
 
+import com.example.sosikintakeservice.dto.request.RequestTargetCalorie;
 import com.example.sosikintakeservice.dto.request.RequestUpdateTargetCalorie;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -38,5 +39,12 @@ public class DayTargetCalorieEntity extends AuditingFields{
 
     public void updateTargetCalorie(RequestUpdateTargetCalorie requestUpdateTargetCalorie) {
         this.dayTargetKcal = requestUpdateTargetCalorie.dayTargetKcal();
+    }
+
+    public static DayTargetCalorieEntity buildDayTargetCalorie(Long memberId, RequestTargetCalorie requestTargetCalorie){
+        return DayTargetCalorieEntity.builder()
+                .memberId(memberId)
+                .dayTargetKcal(requestTargetCalorie.dayTargetKcal())
+                .build();
     }
 }
