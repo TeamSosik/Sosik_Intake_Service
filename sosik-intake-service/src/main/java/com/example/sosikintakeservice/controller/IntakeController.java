@@ -1,7 +1,7 @@
 package com.example.sosikintakeservice.controller;
 
-import com.example.sosikintakeservice.dto.request.RequestIntakeRank;
 import com.example.sosikintakeservice.dto.request.RequestIntake;
+import com.example.sosikintakeservice.dto.request.RequestIntakeRank;
 import com.example.sosikintakeservice.dto.response.ResponseGetCreateAt;
 import com.example.sosikintakeservice.dto.response.ResponseGetIntake;
 import com.example.sosikintakeservice.dto.response.ResponseGetIntakeRank;
@@ -32,7 +32,7 @@ public class IntakeController {
     private final IntakeService intakeService;
 
     @PostMapping("/food")
-    public Result<Void> createIntake(@RequestHeader Long memberId, @RequestBody RequestIntake intake) {
+    public Result<Void> createIntake(@RequestHeader Long memberId, @Valid @RequestBody RequestIntake intake) {
         intakeService.createIntake(memberId, intake);
         return Result.success();
     }
