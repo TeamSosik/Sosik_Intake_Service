@@ -1,13 +1,7 @@
 server:
-  port: 9001
-
-file:
-  location: /home/ubuntu/build/file
+  port: 9003
 
 spring:
-  mvc:
-    jackson:
-      time-zone: Asia/Seoul
   cloud:
     config:
       discovery:
@@ -23,21 +17,20 @@ spring:
   datasource:
 
     # h2
-    # driver-class-name: org.h2.Driver
-    # url: jdbc:h2:mem:testdb
-    # username: sa
+    #     driver-class-name: org.h2.Driver
+    #     url: jdbc:h2:mem:testdb
+    #     username: sa
 
     # mysql
-   driver-class-name: com.mysql.cj.jdbc.Driver
-   url: jdbc:mysql://regionforseoul.cfuukai6usfo.ap-northeast-2.rds.amazonaws.com:3306/sosik?serverTimezone=Asia/Seoul
-   username: sosik
-   password: test1234
-
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://database-1.cfuukai6usfo.ap-northeast-2.rds.amazonaws.com:3306
+    username: admin
+    password: test1234
   data:
     redis:
-      host: 127.0.0.1
+      host: www.so-sik.com
       port: 6379
-      password: test1234
+      password: redis
 
   jpa:
     show-sql: true
@@ -45,20 +38,22 @@ spring:
       ddl-auto: update
     properties:
       hibernate:
+        dialect=org:
+          hibernate:
+            dialect:
+              MySQLDialect:
         format_sql: true
         use_sql_comments: true
     defer-datasource-initialization: true
     generate-ddl: true
   config:
     import: "optional:configserver:"
-  web:
-    locale: ko_KR
 eureka:
   client:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://43.200.224.252:8761/eureka
+      defaultZone: http://www.so-sik.com:8761/eureka
 
 #jpa log
 logging:
